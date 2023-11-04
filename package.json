@@ -13,5 +13,9 @@
   "license": "ISC",
   "dependencies": {
     "solc": "^0.5.16"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^3.0.0",
+    "hardhat": "^2.19.0"
   }
 }
