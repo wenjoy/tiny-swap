@@ -9,6 +9,8 @@ import './libraries/SateMath.sol';
 import './libraries/Math.sol';
 import './libraries/UQ112x112.sol';
 
+import 'hardhat/console.sol';
+
 contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     using SafeMath for uint;
     using UQ112x112 for uint224;
@@ -33,7 +35,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       token1 = _token1;
     }
     
-    uint private unlocked;
+    uint private unlocked = 1;
     modifier lock() {
       require(unlocked ==1, 'UniswapV2: LOCKED');
       unlocked =0;
@@ -52,6 +54,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     
     uint public kLast;
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns ( bool feeOn) {
+      // this contract must be called by factory, otherwise the factory address here will not be contract address and cause error
       address feeTo = IUniswapV2Factory(factory).feeTo();
       feeOn = feeTo != address(0);
       uint _kLast = kLast;
