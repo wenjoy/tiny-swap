@@ -16,7 +16,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     using UQ112x112 for uint224;
     
     uint public constant MINIMUM_LIQUIDITY = 10**3;
-    bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address, uint256)')));
+    bytes4 private constant SELECTOR = bytes4(keccak256(bytes('transfer(address,uint256)')));
 
     address public factory;
     address public token0;
@@ -54,7 +54,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     
     uint public kLast;
     function _mintFee(uint112 _reserve0, uint112 _reserve1) private returns ( bool feeOn) {
-      // this contract must be called by factory, otherwise the factory address here will not be contract address and cause error
+      //NOTE: this contract must be called by factory, otherwise the factory address here will not be contract address and cause error
       address feeTo = IUniswapV2Factory(factory).feeTo();
       feeOn = feeTo != address(0);
       uint _kLast = kLast;
@@ -64,6 +64,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
           uint rootK = Math.sqrt(uint(_reserve0).mul(_reserve1));
           uint rootKLast = Math.sqrt(_kLast);
 
+          //TODO: In which case this will happen?
           if(rootK > rootKLast) {
             uint numerator = totalSupply.mul(rootK.sub(rootKLast));
             uint denominator = rootK.mul(5).add(rootKLast);
@@ -81,6 +82,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       uint32 blockTimestamp = uint32(block.timestamp % 2**32);
       uint32 timeElapsed = blockTimestamp - blockTimestampLast;
 
+      // TODO: figure out this
       if(timeElapsed >0 && _reserve0 !=0 && _reserve1 !=0) {
         price0CumulativeLast +=  uint(UQ112x112.encode(_reserve1).uqdiv(_reserve0)) * timeElapsed;
         price1CumulativeLast +=  uint(UQ112x112.encode(_reserve0).uqdiv(_reserve1)) * timeElapsed;
@@ -122,6 +124,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     }
     
     function _safeTransfer(address token, address to, uint value) private {
+      // TODO: why use call
        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
        require(success && (data.length == 0 || abi.decode(data, (bool))), 'UniswapV2: TRANSFER_FAILED' );
     }
@@ -132,6 +135,8 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       uint balance0 = IERC20(_token0).balanceOf(address(this));
       uint balance1 = IERC20(_token1).balanceOf(address(this));
       uint liquidity = balanceOf[address(this)];
+      
+      // console.log('UniswapV2Pair-139', balance0, balance1, liquidity);
 
       bool feeOn = _mintFee(_reserve0, _reserve1);
       uint _totalSupply = totalSupply;
@@ -161,6 +166,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       uint balance0;
       uint balance1;
 
+      //TODO: Why use curly brace
       {
         address _token0 = token0;
         address _token1 = token1;
@@ -184,8 +190,10 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       }
       
       uint amount0In = balance0 > _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
-      uint amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 1;
+      uint amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
 
+      // console.log('UniswapV2Pair-198', balance0, balance1);
+      // console.log('UniswapV2Pair-199', amount0In, amount1In);
       require(amount0In >0 || amount1In > 0, 'UniswapV2: INSUFFICIENT_INPUT_AMOUNT');
       
       {
