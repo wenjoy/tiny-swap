@@ -66,7 +66,7 @@ describe("UniswapV2Pair", function () {
     await token1.transfer(pairAddress, 1200);
 
     await factory.setFeeTo(pairAddress);
-    await pair.mint(owner.address);
+    await pair.mint(await pair.getAddress());
     return { pair, token0, token1, factory, owner, otherAccount };;
   }
 
@@ -284,92 +284,105 @@ describe("UniswapV2Pair", function () {
         expect(await pair.totalSupply()).to.equal(BigInt(1200));
       });
     })
-    
+
     describe("Second time mint", () => {
-        it("should set liquidity", async() => {
-          const { pair, token0, token1, owner } = await loadFixture(deployPairByFactoryAndMint);
-          let { _reserve0, _reserve1 } = await pair.getReserves();
-          expect(_reserve0).to.equal(BigInt(1200));
-          expect(_reserve1).to.equal(BigInt(1200));
-          expect(await pair.totalSupply()).to.equal(BigInt(1200));
+      it("should set liquidity", async () => {
+        const { pair, token0, token1, owner } = await loadFixture(deployPairByFactoryAndMint);
+        let { _reserve0, _reserve1 } = await pair.getReserves();
+        expect(_reserve0).to.equal(BigInt(1200));
+        expect(_reserve1).to.equal(BigInt(1200));
+        expect(await pair.totalSupply()).to.equal(BigInt(1200));
 
-          await token0.mint(1000);
-          await token1.mint(1200);
-          const pairAddress = await pair.getAddress();
-          await token0.transfer(pairAddress, 1000);
-          await token1.transfer(pairAddress, 1200);
-          const transaction= pair.mint(owner.address)
-          await expect(transaction).to.emit(pair, 'Mint').withArgs(owner.address, 1000, 1200);
-          await expect(transaction).to.emit(pair, 'Sync').withArgs(2200, 2400);
+        await token0.mint(1000);
+        await token1.mint(1200);
+        const pairAddress = await pair.getAddress();
+        await token0.transfer(pairAddress, 1000);
+        await token1.transfer(pairAddress, 1200);
+        const transaction = pair.mint(owner.address)
+        await expect(transaction).to.emit(pair, 'Mint').withArgs(owner.address, 1000, 1200);
+        await expect(transaction).to.emit(pair, 'Sync').withArgs(2200, 2400);
 
-           ({ _reserve0, _reserve1 } = await pair.getReserves());
-          expect(await pair.totalSupply()).to.equal(BigInt(2200));
-          expect(_reserve0).to.equal(BigInt(2200));
-          expect(_reserve1).to.equal(BigInt(2400));
+        ({ _reserve0, _reserve1 } = await pair.getReserves());
+        expect(await pair.totalSupply()).to.equal(BigInt(2200));
+        expect(_reserve0).to.equal(BigInt(2200));
+        expect(_reserve1).to.equal(BigInt(2400));
 
-          expect(await pair.kLast()).to.equal(BigInt(2200*2400));
-        })
+        expect(await pair.kLast()).to.equal(BigInt(2200 * 2400));
+      })
     })
   });
-  
-  describe("Burn", () => {
-    it("should revert with error INSUFFICIENT_LIQUIDITY_BURNED", async ()=>{
-      const { pair, token0, token1, owner} = await loadFixture(deployPairByFactoryAndMint);
-      let { _reserve0, _reserve1} = await pair.getReserves();
-          expect(_reserve0).to.equal(BigInt(1200));
-          expect(_reserve1).to.equal(BigInt(1200));
-          expect(await pair.totalSupply()).to.equal(BigInt(1200));
-          
-          await expect(pair.burn(owner.address)).to.revertedWith('UniswapV2: INSUFFICIENT_LIQUIDITY_BURNED');
+
+  describe.only("Burn", () => {
+    it.skip("should revert with error INSUFFICIENT_LIQUIDITY_BURNED", async () => {
+      const { pair, owner } = await loadFixture(deployPairByFactoryAndMint);
+      let { _reserve0, _reserve1 } = await pair.getReserves();
+      expect(_reserve0).to.equal(BigInt(1200));
+      expect(_reserve1).to.equal(BigInt(1200));
+      expect(await pair.totalSupply()).to.equal(BigInt(1200));
+
+      await expect(pair.burn(owner.address)).to.revertedWith('UniswapV2: INSUFFICIENT_LIQUIDITY_BURNED');
     });
 
-    it.skip("should revert with error TRANSFER_FAILED", async ()=>{
-      const { pair, token0, token1, owner} = await loadFixture(deployPairByFactoryAndMint);
-      let { _reserve0, _reserve1} = await pair.getReserves();
-          expect(_reserve0).to.equal(BigInt(1200));
-          expect(_reserve1).to.equal(BigInt(1200));
-          expect(await pair.totalSupply()).to.equal(BigInt(1200));
-          
-          await expect(pair.burn(owner.address)).to.revertedWith('UniswapV2: TRANSFER_FAILED');
-          expect(await pair.totalSupply()).to.equal(0);
+    it.skip("should revert with error TRANSFER_FAILED", async () => {
+      const { pair, token0, token1, owner } = await loadFixture(deployPairByFactoryAndMint);
+      let { _reserve0, _reserve1 } = await pair.getReserves();
+      expect(_reserve0).to.equal(BigInt(1200));
+      expect(_reserve1).to.equal(BigInt(1200));
+      expect(await pair.totalSupply()).to.equal(BigInt(1200));
+
+      await expect(pair.burn(owner.address)).to.revertedWith('UniswapV2: TRANSFER_FAILED');
+      expect(await pair.totalSupply()).to.equal(0);
     });
 
-    it.skip("should reduce liquidity", async ()=>{
-      const { pair, token0, token1, owner} = await loadFixture(deployPairByFactoryAndMint);
-      let { _reserve0, _reserve1} = await pair.getReserves();
-          expect(_reserve0).to.equal(BigInt(1200));
-          expect(_reserve1).to.equal(BigInt(1200));
-          expect(await pair.totalSupply()).to.equal(BigInt(1200));
-          
-          await expect(pair.burn(owner.address)).to.emit(pair, 'Burn').withArgs(owner.address, 1200, 1200, owner.address);
-          expect(await pair.totalSupply()).to.equal(BigInt(0));
+    it("should reduce total supply", async () => {
+      const { pair, token0, token1, owner } = await loadFixture(deployPairByFactoryAndMint);
+      let { _reserve0, _reserve1 } = await pair.getReserves();
+      expect(_reserve0).to.equal(BigInt(1200));
+      expect(_reserve1).to.equal(BigInt(1200));
+      expect(await pair.totalSupply()).to.equal(BigInt(1200));
+      
+      expect(await token0.balanceOf(owner.address)).to.eql(BigInt(800));
+      expect(await token1.balanceOf(owner.address)).to.eql(BigInt(800));
+      
+      const transaction = pair.burn(owner.address);
+
+      await expect(transaction).to.emit(pair, 'Transfer').withArgs(await pair.getAddress(), ethers.ZeroAddress, 200);
+      await expect(transaction).to.emit(pair, 'Burn').withArgs(owner.address, 200, 200, owner.address);
+
+      expect(await pair.totalSupply()).to.equal(BigInt(1000));
+      expect(await token0.balanceOf(owner.address)).to.eql(BigInt(1000));
+      expect(await token1.balanceOf(owner.address)).to.eql(BigInt(1000));
+
+      ({ _reserve0, _reserve1 } = await pair.getReserves());
+      expect(_reserve0).to.equal(BigInt(1000));
+      expect(_reserve1).to.equal(BigInt(1000));
     });
   });
-  
+
   describe("Swap", () => {
-    it.skip('should revert with error INSUFFICIENT_OUTPUT_AMOUNT', async() => {
-      const { pair, owner} = await loadFixture(deployPairByFactoryAndMint);
+    it.skip('should revert with error INSUFFICIENT_OUTPUT_AMOUNT', async () => {
+      const { pair, owner } = await loadFixture(deployPairByFactoryAndMint);
       await expect(pair.swap(-1, 0, owner.address, "0x00")).to.revertedWith('UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT');
     });
 
-    it('should revert with error INSUFFICIENT_LIQUIDITY_BURNED', async() => {
-      const { pair, owner} = await loadFixture(deployPairByFactoryAndMint);
+    it('should revert with error INSUFFICIENT_LIQUIDITY_BURNED', async () => {
+      const { pair, owner } = await loadFixture(deployPairByFactoryAndMint);
       await expect(pair.swap(1201, 1201, owner.address, "0x00")).to.revertedWith('UniswapV2: INSUFFICIENT_LIQUIDITY');
     });
 
-    it('should revert with error INVALID_ID', async() => {
-      const { pair, token0} = await loadFixture(deployPairByFactoryAndMint);
+    it('should revert with error INVALID_ID', async () => {
+      const { pair, token0 } = await loadFixture(deployPairByFactoryAndMint);
       await expect(pair.swap(1000, 1000, token0, "0x00")).to.revertedWith('UniswapV2: INVALID_ID');
     });
 
-    it.skip('should revert with error TRANSFER_FAILED', async() => {
+    it.skip('should revert with error TRANSFER_FAILED', async () => {
       //TODO: in which case this error occurs?
-      const { pair, owner} = await loadFixture(deployPairByFactoryAndMint);
+      const { pair, owner } = await loadFixture(deployPairByFactoryAndMint);
       await expect(pair.swap(1000, 1000, ethers.ZeroAddress, "0x")).to.revertedWith('UniswapV2: TRANSFER_FAILED');
     });
 
-    it('should revert with error INSUFFICIENT_INPUT_AMOUNT', async() => {
-      const { pair, owner, otherAccount, token0, token1} = await loadFixture(deployPairByFactoryAndMint);
+    it('should revert with error INSUFFICIENT_INPUT_AMOUNT', async () => {
+      const { pair, owner, otherAccount, token0, token1 } = await loadFixture(deployPairByFactoryAndMint);
       expect(await token0.balanceOf(owner)).to.equal(800);
       expect(await token1.balanceOf(owner)).to.equal(800);
 
@@ -378,34 +391,34 @@ describe("UniswapV2Pair", function () {
       await expect(pair.swap(1000, 1000, otherAccount, "0x")).to.revertedWith('UniswapV2: INSUFFICIENT_INPUT_AMOUNT');
     });
 
-    it('should revert without error if target address failed to implement IUniswapV2Callee interface', async() => {
+    it('should revert without error if target address failed to implement IUniswapV2Callee interface', async () => {
       const { pair } = await loadFixture(deployPairByFactoryAndMint);
       await expect(pair.swap(1000, 1000, pair, "0x00")).to.revertedWithoutReason();
     });
 
-    it('should revert with error K', async() => {
-      const { pair, owner, otherAccount, token0, token1} = await loadFixture(deployPairByFactoryAndMint);
+    it('should revert with error K', async () => {
+      const { pair, owner, otherAccount, token0, token1 } = await loadFixture(deployPairByFactoryAndMint);
       expect(await token0.balanceOf(owner)).to.equal(800);
       expect(await token1.balanceOf(owner)).to.equal(800);
       expect(await token0.balanceOf(pair)).to.equal(1200);
       expect(await token1.balanceOf(pair)).to.equal(1200);
       expect(await token0.balanceOf(otherAccount)).to.equal(0);
       expect(await token1.balanceOf(otherAccount)).to.equal(0);
-      
-      const {_reserve0, _reserve1} = await pair.getReserves();
+
+      const { _reserve0, _reserve1 } = await pair.getReserves();
       expect(_reserve0).to.eql(BigInt(1200));
       expect(_reserve1).to.eql(BigInt(1200));
       await expect(pair.swap(1100, 1100, pair, "0x")).to.revertedWith('UniswapV2: K');
     });
 
-    it('should revert with error K, at edge case', async() => {
-      const { pair, owner, token0, token1, otherAccount} = await loadFixture(deployPairByFactoryAndMint);
+    it('should revert with error K, at edge case', async () => {
+      const { pair, owner, token0, token1, otherAccount } = await loadFixture(deployPairByFactoryAndMint);
       expect(await token0.balanceOf(owner)).to.equal(800);
       expect(await token1.balanceOf(owner)).to.equal(800);
       expect(await token0.balanceOf(pair)).to.equal(1200);
       expect(await token1.balanceOf(pair)).to.equal(1200);
 
-      let {_reserve0, _reserve1} = await pair.getReserves();
+      let { _reserve0, _reserve1 } = await pair.getReserves();
       expect(_reserve0).to.eql(BigInt(1200));
       expect(_reserve1).to.eql(BigInt(1200));
 
@@ -414,8 +427,8 @@ describe("UniswapV2Pair", function () {
       await expect(pair.swap(1000, 1000, pair, "0x")).to.revertedWith('UniswapV2: K');
     });
 
-    it('should transfer token from pair contract', async() => {
-      const { pair, owner, token0, token1, otherAccount} = await loadFixture(deployPairByFactoryAndMint);
+    it('should transfer token from pair contract', async () => {
+      const { pair, owner, token0, token1, otherAccount } = await loadFixture(deployPairByFactoryAndMint);
       expect(await token0.balanceOf(owner)).to.equal(800);
       expect(await token1.balanceOf(owner)).to.equal(800);
       expect(await token0.balanceOf(pair)).to.equal(1200);
@@ -433,13 +446,13 @@ describe("UniswapV2Pair", function () {
       expect(await token0.balanceOf(otherAccount)).to.equal(0);
       expect(await token1.balanceOf(otherAccount)).to.equal(0);
 
-      let {_reserve0, _reserve1} = await pair.getReserves();
+      let { _reserve0, _reserve1 } = await pair.getReserves();
       expect(_reserve0).to.eql(BigInt(1200));
       expect(_reserve1).to.eql(BigInt(1200));
       //tranfer to otherAccount don't make sense
       await expect(pair.swap(100, 100, otherAccount, "0x")).to.emit(pair, 'Swap').withArgs(owner.address, 300, 300, 100, 100, otherAccount.address);
 
-      ({_reserve0, _reserve1} = await pair.getReserves());
+      ({ _reserve0, _reserve1 } = await pair.getReserves());
       expect(_reserve0).to.eql(BigInt(1400));
       expect(_reserve1).to.eql(BigInt(1400));
 
@@ -451,8 +464,8 @@ describe("UniswapV2Pair", function () {
       expect(await token1.balanceOf(otherAccount)).to.equal(100);
     });
 
-    it('should transfer token from pair contract, to pair', async() => {
-      const { pair, owner, token0, token1, otherAccount} = await loadFixture(deployPairByFactoryAndMint);
+    it('should transfer token from pair contract, to pair', async () => {
+      const { pair, owner, token0, token1, otherAccount } = await loadFixture(deployPairByFactoryAndMint);
       expect(await token0.balanceOf(owner)).to.equal(800);
       expect(await token1.balanceOf(owner)).to.equal(800);
       expect(await token0.balanceOf(pair)).to.equal(1200);
@@ -470,13 +483,13 @@ describe("UniswapV2Pair", function () {
       expect(await token0.balanceOf(otherAccount)).to.equal(0);
       expect(await token1.balanceOf(otherAccount)).to.equal(0);
 
-      let {_reserve0, _reserve1} = await pair.getReserves();
+      let { _reserve0, _reserve1 } = await pair.getReserves();
       expect(_reserve0).to.eql(BigInt(1200));
       expect(_reserve1).to.eql(BigInt(1200));
 
       await expect(pair.swap(100, 100, pair, "0x")).to.emit(pair, 'Swap').withArgs(owner.address, 110, 110, 100, 100, await pair.getAddress());
 
-      ({_reserve0, _reserve1} = await pair.getReserves());
+      ({ _reserve0, _reserve1 } = await pair.getReserves());
       expect(_reserve0).to.eql(BigInt(1210));
       expect(_reserve1).to.eql(BigInt(1210));
 
@@ -488,14 +501,14 @@ describe("UniswapV2Pair", function () {
       expect(await token1.balanceOf(otherAccount)).to.equal(0);
     });
 
-    it('should transfer token from pair contract, different price exchange', async() => {
-      const { pair, owner, token0, token1, otherAccount} = await loadFixture(deployPairByFactoryAndMint);
+    it('should transfer token from pair contract, different price exchange', async () => {
+      const { pair, owner, token0, token1, otherAccount } = await loadFixture(deployPairByFactoryAndMint);
       expect(await token0.balanceOf(owner)).to.equal(800);
       expect(await token1.balanceOf(owner)).to.equal(800);
       expect(await token0.balanceOf(pair)).to.equal(1200);
       expect(await token1.balanceOf(pair)).to.equal(1200);
 
-      let {_reserve0, _reserve1} = await pair.getReserves();
+      let { _reserve0, _reserve1 } = await pair.getReserves();
       expect(_reserve0).to.eql(BigInt(1200));
       expect(_reserve1).to.eql(BigInt(1200));
 
@@ -503,7 +516,7 @@ describe("UniswapV2Pair", function () {
       await token1.transfer(pair, 20);
       await expect(pair.swap(1000, 10, pair, "0x")).to.emit(pair, 'Swap').withArgs(owner.address, 1010, 30, 1000, 10, await pair.getAddress());
 
-      ({_reserve0, _reserve1} = await pair.getReserves());
+      ({ _reserve0, _reserve1 } = await pair.getReserves());
       expect(_reserve0).to.eql(BigInt(1210));
       expect(_reserve1).to.eql(BigInt(1220));
     });

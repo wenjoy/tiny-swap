@@ -124,7 +124,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
     }
     
     function _safeTransfer(address token, address to, uint value) private {
-      // TODO: why use call
+      //why use call
        (bool success, bytes memory data) = token.call(abi.encodeWithSelector(SELECTOR, to, value));
        require(success && (data.length == 0 || abi.decode(data, (bool))), 'UniswapV2: TRANSFER_FAILED' );
     }
@@ -136,11 +136,8 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       uint balance1 = IERC20(_token1).balanceOf(address(this));
       uint liquidity = balanceOf[address(this)];
       
-      // console.log('UniswapV2Pair-139', balance0, balance1, liquidity);
-
       bool feeOn = _mintFee(_reserve0, _reserve1);
       uint _totalSupply = totalSupply;
-      //TODO? means
       amount0 = liquidity.mul(balance0) / _totalSupply;
       amount1 = liquidity.mul(balance1) / _totalSupply;
       require(amount0 > 0 && amount1 > 0, 'UniswapV2: INSUFFICIENT_LIQUIDITY_BURNED');
@@ -150,6 +147,8 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       balance0 = IERC20(_token0).balanceOf(address(this));
       balance1 = IERC20(_token1).balanceOf(address(this));
       _update(balance0, balance1, _reserve0, _reserve1);
+
+      console.log(balance0, liquidity, totalSupply, feeOn);
 
       if(feeOn) {
         kLast = uint(reserve0).mul(reserve1);
