@@ -48,7 +48,7 @@ describe("UniswapV2Pair", function () {
     await factory.createPair(token0, token1);
     const pairAddress = await factory.getPair(token0, token1);
     const pair = (await Pair.attach(pairAddress)) as UniswapV2Pair;
-    return { pair, token0, token1, factory, owner, otherAccount };;
+    return { pair, token0, token1, factory, owner, otherAccount };
   }
 
   async function deployPairByFactoryAndMint() {
@@ -67,7 +67,38 @@ describe("UniswapV2Pair", function () {
 
     await factory.setFeeTo(pairAddress);
     await pair.mint(await pair.getAddress());
-    return { pair, token0, token1, factory, owner, otherAccount };;
+    return { pair, token0, token1, factory, owner, otherAccount };
+  }
+  function expand18Decimal(n: number) {
+    return n * 10 ** 3;
+  }
+
+
+  async function addLiquidity(token0Amount: number, token1Amount: number) {
+    const MAX_SUPPLY = expand18Decimal(2000);
+
+    if (token0Amount > MAX_SUPPLY || token1Amount > MAX_SUPPLY) {
+      throw Error("Out range")
+    }
+
+    const { factory, owner, otherAccount } = await deployFactoryFixture();
+    const Token = await ethers.getContractFactory('ERC20');
+    const Pair = await ethers.getContractFactory('UniswapV2Pair');
+    const token0 = await Token.deploy();
+    const token1 = await Token.deploy();
+    await factory.createPair(token0, token1);
+    const pairAddress = await factory.getPair(token0, token1);
+    const pair = (await Pair.attach(pairAddress)) as UniswapV2Pair;
+
+    await token0.mint(MAX_SUPPLY);
+    await token1.mint(MAX_SUPPLY);
+
+    await token0.transfer(pairAddress, token0Amount);
+    await token1.transfer(pairAddress, token1Amount);
+
+    await factory.setFeeTo(pairAddress);
+    await pair.mint(owner);
+    return { pair, token0, token1, factory, owner, otherAccount };
   }
 
   describe("Deployment", function () {
@@ -312,7 +343,7 @@ describe("UniswapV2Pair", function () {
     })
   });
 
-  describe.only("Burn", () => {
+  describe("Burn", () => {
     it.skip("should revert with error INSUFFICIENT_LIQUIDITY_BURNED", async () => {
       const { pair, owner } = await loadFixture(deployPairByFactoryAndMint);
       let { _reserve0, _reserve1 } = await pair.getReserves();
@@ -340,10 +371,10 @@ describe("UniswapV2Pair", function () {
       expect(_reserve0).to.equal(BigInt(1200));
       expect(_reserve1).to.equal(BigInt(1200));
       expect(await pair.totalSupply()).to.equal(BigInt(1200));
-      
+
       expect(await token0.balanceOf(owner.address)).to.eql(BigInt(800));
       expect(await token1.balanceOf(owner.address)).to.eql(BigInt(800));
-      
+
       const transaction = pair.burn(owner.address);
 
       await expect(transaction).to.emit(pair, 'Transfer').withArgs(await pair.getAddress(), ethers.ZeroAddress, 200);
@@ -360,6 +391,42 @@ describe("UniswapV2Pair", function () {
   });
 
   describe("Swap", () => {
+    describe('Swap:token0', () => {
+      it('should swap token0 same account support liquidity and swap', async () => {
+        const token0Amount = expand18Decimal(2);
+        const token1Amount = expand18Decimal(2);
+
+        const { pair, token0, token1, owner } = await addLiquidity(token0Amount, token1Amount);
+
+        const swapAmount = expand18Decimal(1);
+        const expectedOutputAmount = 2; //1662497915624478906;
+
+        const pairAddress = await pair.getAddress();
+
+        await token0.transfer(pairAddress, swapAmount);
+        await expect(pair.swap(0, expectedOutputAmount, owner, '0x'))
+          .to.emit(token1, 'Transfer')
+          .withArgs(pairAddress, owner.address, expectedOutputAmount)
+          .to.emit(pair, 'Sync')
+          .withArgs(token0Amount + swapAmount, token1Amount - expectedOutputAmount)
+          .to.emit(pair, 'Swap')
+          .withArgs(owner.address, swapAmount, 0, 0, expectedOutputAmount, owner.address)
+
+        const { _reserve0, _reserve1 } = await pair.getReserves();
+        expect(_reserve0).to.eq(token0Amount + swapAmount);
+        expect(_reserve1).to.eq(token1Amount - expectedOutputAmount);
+
+        expect(await token0.balanceOf(pairAddress)).to.eq(token0Amount + swapAmount);
+        expect(await token1.balanceOf(pairAddress)).to.eq(token0Amount - expectedOutputAmount);
+
+        const totalSupplyToken0 = await token0.totalSupply();
+        const totalSupplyToken1 = await token1.totalSupply();
+
+        expect(await token0.balanceOf(owner)).to.eq(Number(totalSupplyToken0) - token0Amount - swapAmount);
+        expect(await token1.balanceOf(owner)).to.eq(Number(totalSupplyToken1) - token1Amount + expectedOutputAmount);
+      });
+
+    })
     it.skip('should revert with error INSUFFICIENT_OUTPUT_AMOUNT', async () => {
       const { pair, owner } = await loadFixture(deployPairByFactoryAndMint);
       await expect(pair.swap(-1, 0, owner.address, "0x00")).to.revertedWith('UniswapV2: INSUFFICIENT_OUTPUT_AMOUNT');

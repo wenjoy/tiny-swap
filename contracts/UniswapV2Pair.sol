@@ -98,6 +98,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       (uint112 _reserve0, uint112 _reserve1,) = getReserves();
       uint balance0 = IERC20(token0).balanceOf(address(this));
       uint balance1 = IERC20(token1).balanceOf(address(this));
+      console.log(_reserve0, _reserve1, balance0, balance1);
       uint amount0 = balance0.sub(_reserve0);
       uint amount1 = balance1.sub(_reserve1);
 
