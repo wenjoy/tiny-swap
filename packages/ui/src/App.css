@@ -1,0 +1,33 @@
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.menu {
+  margin-left: 20px;
+  display: flex;
+}
+.menu-item {
+  padding-right: 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.menu-item a {
+  color: white;
+  text-decoration: none;
+}
+.menu-item a:hover {
+  color: lightgray;
+}
+
+.App-link {
+  color: #61dafb;
+}
