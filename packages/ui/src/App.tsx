@@ -1,7 +1,9 @@
 import './App.css';
 import AddLiquidity from './components/AddLiquidity';
+import useEthers from './hooks/useEthers';
 
 function App() {
+  useEthers().then(() => {console.log('success')}).catch((err) => {console.log(err)});
   return (
     <div className="App">
       <header className="App-header">
