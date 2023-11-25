@@ -16,6 +16,8 @@ async function main() {
   console.log("token1 address: ", await token1.getAddress());
   await token1.mint(2000)
   console.log('token1 balance', await token1.balanceOf(deployer))
+  
+  factory.createPair(token0, token1);
 }
 
 main()

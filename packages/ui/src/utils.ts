@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
+import erc20ABI from "./artifactory/abi/ERC20.json";
 import factoryABI from "./artifactory/abi/UniswapV2Factory.json";
 import pairABI from "./artifactory/abi/UniswapV2Pair.json";
-import erc20ABI from "./artifactory/abi/ERC20.json";
 
 let provider: ethers.JsonRpcProvider;
 
@@ -48,7 +48,7 @@ export async function getFactoryContractWithSigner() {
   return contractWithSigner
 }
 
-async function getPairAddress(token0Address: address, token1Address: address) {
+export async function getPairAddress(token0Address: address, token1Address: address) {
   const contract = getFactoryContract()
   const pair = await contract.getPair(token0Address, token1Address)
   return pair
@@ -61,19 +61,19 @@ export async function getPairLength() {
   return pairsLength
 }
 
-export async function createPair(token0Address: address, token1Address: address): Promise<address> {
-  const contract = await getFactoryContractWithSigner()
-
-  let pair = await getPairAddress(token0Address, token1Address)
-
-  if (ethers.ZeroAddress == pair) {
-    const result = await contract.createPair(token0Address, token1Address)
-    console.log('result', result)
-  }
-
-  pair = await getPairAddress(token0Address, token1Address)
-  return pair
-}
+// export async function createPair(token0Address: address, token1Address: address): Promise<address> {
+//   const contract = await getFactoryContractWithSigner()
+//
+//   let pair = await getPairAddress(token0Address, token1Address)
+//
+//   if (ethers.ZeroAddress == pair) {
+//     const result = await contract.createPair(token0Address, token1Address)
+//     console.log('result', result)
+//   }
+//
+//   pair = await getPairAddress(token0Address, token1Address)
+//   return pair
+// }
 
 export async function mint(pair: address, to: address) {
 const pairContract = await getContractWithSigner(pair, pairABI.abi);

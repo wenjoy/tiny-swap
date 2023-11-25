@@ -1,7 +1,7 @@
 import Button from '@mui/material/Button';
 import TokenForm from './TokenForm'
 import { Container, Typography } from '@mui/material';
-import { createPair, getSigner, mint, tokenTransfer} from '../utils';
+import { getPairAddress, getSigner, mint, tokenTransfer} from '../utils';
 
 function AddLiquidity() {
   const token0Address = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
@@ -9,7 +9,7 @@ function AddLiquidity() {
 
   async function addLiquidity() {
     const value = 1100
-    const pairAddress = await createPair(token0Address, token1Address);
+    const pairAddress = await getPairAddress(token0Address, token1Address);
     console.log('AddLiquidity-11-pairAddress', pairAddress)
     const signer = await getSigner()
     

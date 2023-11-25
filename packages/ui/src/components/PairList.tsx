@@ -18,16 +18,15 @@ function PairList () {
   return <List
           subheader={<Typography>Totals pairs: {pairTotal}</Typography>}
           >
-    {list.map(({name}) => <Collapse>
-      <List>
-        <ListItemButton>
-          <ListItemIcon>
-            <StarBorder />
-          </ListItemIcon>
-          <ListItemText primary={name} />
-        </ListItemButton>
-      </List>
-    </Collapse>)}
+    {list.map(({name}) => <>
+          <ListItemButton>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary={name} />
+          </ListItemButton>
+    </>
+    )}
   </List>
 }
 
