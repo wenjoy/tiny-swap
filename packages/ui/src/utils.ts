@@ -54,7 +54,7 @@ async function getPairAddress(token0Address: address, token1Address: address) {
   return pair
 }
 
-async function getPairLength() {
+export async function getPairLength() {
   const contract = getFactoryContract();
   const pairsLength = await contract.allParisLength();
   console.log('pairsLength', pairsLength)
@@ -81,15 +81,20 @@ const result = await pairContract.mint(to)
 console.log('utils-65-result', result)
 }
 
-export async function tokenMint(token: address, value: number) {
-  const tokenCotract = await getContractWithSigner(token, erc20ABI.abi)
-  const result = await tokenCotract.mint(value)
-  console.log('utils-79-result', result)
+// export async function tokenMint(token: address, value: number) {
+//   const tokenCotract = await getContractWithSigner(token, erc20ABI.abi)
+//   const result = await tokenCotract.mint(value)
+//   console.log('utils-79-result', result)
+// }
+
+export async function tokenBalnce(token: address) {
+  const tokenCotract = await getContract(token, erc20ABI.abi)
+  const balance = await tokenCotract.balanceOf(await getSigner())
+  // console.log('utils-93-balance', balance)
+  return balance
 }
 export async function tokenTransfer(token: address, value: number,to: address) {
   const tokenCotract = await getContractWithSigner(token, erc20ABI.abi)
-  const balance = await tokenCotract.balanceOf(await getSigner())
-  console.log('utils-92-balance', balance)
   const result = await tokenCotract.transfer(to, value)
-  console.log('utils-85-result', result)
+  console.log('utils-98-result', result)
 }

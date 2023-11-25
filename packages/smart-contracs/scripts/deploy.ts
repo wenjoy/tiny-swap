@@ -9,8 +9,13 @@ async function main() {
 
   const token0 = await ethers.deployContract('ERC20')
   console.log("token0 address: ", await token0.getAddress());
+  await token0.mint(2000)
+  console.log('token0 balance', await token0.balanceOf(deployer))
+
   const token1 = await ethers.deployContract('ERC20')
   console.log("token1 address: ", await token1.getAddress());
+  await token1.mint(2000)
+  console.log('token1 balance', await token1.balanceOf(deployer))
 }
 
 main()
