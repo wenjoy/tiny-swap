@@ -60,7 +60,14 @@ export async function getPairLength() {
   console.log('pairsLength', pairsLength)
   return pairsLength
 }
-
+export async function getPairShare(pair: address) {
+  const pairContract = await getContractWithSigner(pair, pairABI.abi);
+  const signer = await getSigner()
+  const total = await pairContract.totalSupply()
+  const balance = await pairContract.balanceOf(signer)
+  // console.log('utils-68-total', total, balance, balance/total)
+  return total ==0 ? 0 : Number(balance) / Number(total)
+}
 // export async function createPair(token0Address: address, token1Address: address): Promise<address> {
 //   const contract = await getFactoryContractWithSigner()
 //
@@ -76,9 +83,21 @@ export async function getPairLength() {
 // }
 
 export async function mint(pair: address, to: address) {
-const pairContract = await getContractWithSigner(pair, pairABI.abi);
-const result = await pairContract.mint(to)
-console.log('utils-65-result', result)
+  const pairContract = await getContractWithSigner(pair, pairABI.abi);
+  const result = await pairContract.mint(to)
+  console.log('utils-65-result', result)
+}
+
+export async function burn(pair: address, to: address) {
+  const signer = await getSigner()
+  const pairContract = await getContractWithSigner(pair, pairABI.abi)
+  const liquidity = await pairContract.balanceOf(signer)
+  console.log('utils-95-liquidity', liquidity)
+  await pairContract.approve(signer, 100000000000000)
+  const transferResult = await pairContract.transferFrom(signer, pair, liquidity)
+  console.log('utils-96-transferResult', transferResult)
+  const result = await pairContract.burn(to)
+  console.log('utils-98-result', result)
 }
 
 // export async function tokenMint(token: address, value: number) {

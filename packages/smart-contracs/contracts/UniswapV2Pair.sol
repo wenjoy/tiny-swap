@@ -113,6 +113,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       }
       
       require(liquidity > 0, 'UniswapV2: INSUFFICIENT_LIQUIDITY_MINTED');
+      console.log('UniswapV2Pair-116', to, liquidity);
       _mint(to, liquidity);
 
       _update(balance0, balance1, _reserve0, _reserve1);
@@ -139,6 +140,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       
       bool feeOn = _mintFee(_reserve0, _reserve1);
       uint _totalSupply = totalSupply;
+      console.log(balance0, balance1, totalSupply, liquidity);
       amount0 = liquidity.mul(balance0) / _totalSupply;
       amount1 = liquidity.mul(balance1) / _totalSupply;
       require(amount0 > 0 && amount1 > 0, 'UniswapV2: INSUFFICIENT_LIQUIDITY_BURNED');

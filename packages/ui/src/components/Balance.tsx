@@ -1,5 +1,5 @@
 import { Typography } from '@mui/material'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { tokenBalnce } from '../utils'
 
 function Balance ({token}: {token: string}) {
@@ -11,7 +11,7 @@ function Balance ({token}: {token: string}) {
       setBalance(balance)
       setTimeout(() => {
         fetchBalance().catch(err => console.error(err))
-      }, 1000);
+      }, 10000);
     }
     fetchBalance().catch(err => console.error(err))
   }, [])
