@@ -183,7 +183,6 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
         }
         
         if(data.length >0) {
-          // TODO? where is implementation
           IUniswapV2Callee(to).uniswapV2Call(msg.sender, amount0Out, amount1Out, data);
         }
         
@@ -194,8 +193,8 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       uint amount0In = balance0 > _reserve0 - amount0Out ? balance0 - (_reserve0 - amount0Out) : 0;
       uint amount1In = balance1 > _reserve1 - amount1Out ? balance1 - (_reserve1 - amount1Out) : 0;
 
-      // console.log('UniswapV2Pair-198', balance0, balance1);
-      // console.log('UniswapV2Pair-199', amount0In, amount1In);
+      console.log('UniswapV2Pair-198', balance0, balance1);
+      console.log('UniswapV2Pair-199', amount0In, amount1In);
       require(amount0In >0 || amount1In > 0, 'UniswapV2: INSUFFICIENT_INPUT_AMOUNT');
       
       {

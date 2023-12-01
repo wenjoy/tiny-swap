@@ -1,5 +1,5 @@
 import { Delete, StarBorder } from '@mui/icons-material';
-import { IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { burn, getPairAddress, getPairLength, getPairShare, getSigner } from '../utils';
 
@@ -30,7 +30,11 @@ function PairList () {
     await burn(pairAddress, signer)
   }
   return <List
-          subheader={<Typography>Totals pairs: {pairTotal}</Typography>}
+          subheader={<Box>
+             <Typography variant='h4'>Pool list</Typography>           
+             <Typography>Totals pairs: {pairTotal}</Typography>           
+          </Box>
+          }
           >
     {list.map(({name}) => <ListItem
           key={name}

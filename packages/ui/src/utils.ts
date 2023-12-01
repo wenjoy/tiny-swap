@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { Signer, ethers } from "ethers";
 import erc20ABI from "./artifactory/abi/ERC20.json";
 import factoryABI from "./artifactory/abi/UniswapV2Factory.json";
 import pairABI from "./artifactory/abi/UniswapV2Pair.json";
@@ -20,10 +20,10 @@ function getContract(contractAddress: address, abi: ethers.InterfaceAbi): ethers
   return contract
 }
 
-async function getContractWithSigner(contractAddress: address, abi: ethers.InterfaceAbi): Promise<ethers.Contract> {
-  const signer = await getSigner();
+async function getContractWithSigner(contractAddress: address, abi: ethers.InterfaceAbi, signer?: Signer): Promise<ethers.Contract> {
+  const defaultSigner = await getSigner();
   const contract = getContract(contractAddress, abi);
-  const contractWithSigner = contract.connect(signer) as ethers.Contract
+  const contractWithSigner = contract.connect(signer ?? defaultSigner) as ethers.Contract
   return contractWithSigner
 }
 
@@ -32,6 +32,12 @@ export async function getSigner() {
   const signer = await provider.getSigner();
   return signer
 }
+
+export function getOther() {
+  const wallet = new ethers.Wallet('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d')
+  return wallet
+}
+
 
 export function getFactoryContract() {
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -48,7 +54,7 @@ export async function getFactoryContractWithSigner() {
   return contractWithSigner
 }
 
-export async function getPairAddress(token0Address: address, token1Address: address) {
+export async function getPairAddress(token0Address: address, token1Address: address): Promise<string> {
   const contract = getFactoryContract()
   const pair = await contract.getPair(token0Address, token1Address)
   return pair
@@ -100,20 +106,37 @@ export async function burn(pair: address, to: address) {
   console.log('utils-98-result', result)
 }
 
+export async function swap(amount0Out: number, amount1Out: number, to: address, pair: address) {
+  const pairContract = await getContractWithSigner(pair, pairABI.abi)
+  console.log('utils-111', 'debug-------------------')
+  const result = await pairContract.swap(amount0Out, amount1Out, to, '0x')
+  console.log('utils-112-result', result)
+}
+
+export async function getReserves(pair: address) {
+  const pairContract = await getContract(pair, pairABI.abi)
+  const result = await pairContract.getReserves()
+  console.log('utils-119-result', result)
+  return result
+}
+
 // export async function tokenMint(token: address, value: number) {
 //   const tokenCotract = await getContractWithSigner(token, erc20ABI.abi)
 //   const result = await tokenCotract.mint(value)
 //   console.log('utils-79-result', result)
 // }
 
-export async function tokenBalnce(token: address) {
+export async function tokenBalnce(token: address, owner?: address) {
   const tokenCotract = await getContract(token, erc20ABI.abi)
-  const balance = await tokenCotract.balanceOf(await getSigner())
+  const balance = await tokenCotract.balanceOf(owner ?? await getSigner())
   // console.log('utils-93-balance', balance)
   return balance
 }
-export async function tokenTransfer(token: address, value: number,to: address) {
-  const tokenCotract = await getContractWithSigner(token, erc20ABI.abi)
+export async function tokenTransfer(token: address, value: number,to: address, from?: address) {
+  const signer = from ? getOther().connect(provider) : undefined
+
+console.log('utils-137-signer', signer)
+  const tokenCotract = await getContractWithSigner(token, erc20ABI.abi, signer)
   const result = await tokenCotract.transfer(to, value)
   console.log('utils-98-result', result)
 }
