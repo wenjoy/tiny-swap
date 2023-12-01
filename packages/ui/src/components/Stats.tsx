@@ -1,3 +1,4 @@
+import styled from '@emotion/styled'
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { getOther, getPairAddress, getReserves, getSigner } from '../utils'
@@ -28,6 +29,12 @@ function Stats() {
     fetchAddress().catch(err => console.error(err))
   }, [])
   
+  const StyledTableCell = styled(TableCell)(() => ({
+    '&': {
+      fontWeight: 700,
+    }
+  }))
+  
   return <TableContainer component={Paper}>
       <Table sx={{minWidth: 500}} aria-label="simple table">
         <TableHead>
@@ -38,15 +45,19 @@ function Stats() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {contracts.map((contract) => <TableRow>
+          {contracts.map((contract) => <TableRow key={contract}>
               {
-                accounts.map((account) => <TableCell>
+                accounts.map((account) => <TableCell key={account}>
                       <Balance token={contract} owner={account} />
                   </TableCell>
                 )
               }
             </TableRow>
           )}
+          <TableRow>
+            <StyledTableCell component={'th'}>Reserve0</StyledTableCell>
+            <StyledTableCell component={'th'}>Reserve1</StyledTableCell>
+          </TableRow>
           <TableRow>
             <TableCell>{reserves[0]?.toString()}</TableCell>
             <TableCell>{reserves[1]?.toString()}</TableCell>
