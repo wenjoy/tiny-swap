@@ -2,7 +2,7 @@ import { Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { tokenBalnce } from '../utils'
 
-function Balance ({token, owner}: {token: string, owner?: string}) {
+function Balance ({token, owner, simple}: {token: string, owner?: string, simple?: boolean}) {
   const [balance, setBalance]= useState(0)
   
   useEffect(() => {
@@ -17,8 +17,7 @@ function Balance ({token, owner}: {token: string, owner?: string}) {
     fetchBalance().catch(err => console.error(err))
   }, [])
 
-  // return <Typography>Balance: {balance.toString()}</Typography>
-  return <Typography>{balance.toString()}</Typography>
+  return <Typography>{simple? '': 'Balance: '}{balance.toString()}</Typography>
 }
 
 export default Balance

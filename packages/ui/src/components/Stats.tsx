@@ -48,7 +48,7 @@ function Stats() {
           {contracts.map((contract) => <TableRow key={contract}>
               {
                 accounts.map((account) => <TableCell key={account}>
-                      <Balance token={contract} owner={account} />
+                      <Balance token={contract} owner={account} simple />
                   </TableCell>
                 )
               }
