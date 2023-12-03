@@ -54,10 +54,16 @@ export async function getFactoryContractWithSigner() {
   return contractWithSigner
 }
 
-export async function getPairAddress(token0Address: address, token1Address: address): Promise<string> {
+export async function getPairAddress(token0: TOKEN, token1: TOKEN): Promise<string> {
+  const token0Address = tokenToAddress(token0)
+  const token1Address = tokenToAddress(token1)
   const contract = getFactoryContract()
-  const pair = await contract.getPair(token0Address, token1Address)
-  return pair
+  try {
+    const pair = await contract.getPair(token0Address, token1Address)
+    return pair
+  }catch(err) {
+    throw Error('NO MATCHED PAIR')
+  }
 }
 
 export async function getPairLength() {
@@ -126,17 +132,38 @@ export async function getReserves(pair: address) {
 //   console.log('utils-79-result', result)
 // }
 
-export async function tokenBalnce(token: address, owner?: address) {
-  const tokenCotract = await getContract(token, erc20ABI.abi)
+//TOKEN specific
+export async function tokenBalnce(token: TOKEN, owner?: address) {
+  const tokenAddress = tokenToAddress(token)
+  const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
   const balance = await tokenCotract.balanceOf(owner ?? await getSigner())
   // console.log('utils-93-balance', balance)
   return balance
 }
-export async function tokenTransfer(token: address, value: number,to: address, from?: address) {
+export async function tokenTransfer(token: TOKEN, value: number,to: address, from?: address) {
   const signer = from ? getOther().connect(provider) : undefined
 
-console.log('utils-137-signer', signer)
-  const tokenCotract = await getContractWithSigner(token, erc20ABI.abi, signer)
+  const tokenAddes = tokenToAddress(token)
+  const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi, signer)
   const result = await tokenCotract.transfer(to, value)
   console.log('utils-98-result', result)
+}
+
+/**
+ * why not just TOKENS = {DAI: '0x11', DOGE: '0x22'}, will this better?
+ */
+export const TOKENS = ['DAI', 'DOGE'] as const
+//TODO: refine this type, it's not right enumric | genric type `string`
+export type TOKEN = (typeof TOKENS)[number] | string
+
+const TOKENADDRESS = ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9']
+
+const tokenMap = new Map<TOKEN, string>()
+TOKENS.forEach((token, index)=> {
+  tokenMap.set(token, TOKENADDRESS[index]);
+})
+
+export function tokenToAddress(token: TOKEN): string {
+  const ret = tokenMap.get(token)
+  return ret ?? token;
 }

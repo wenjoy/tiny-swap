@@ -1,8 +1,8 @@
 import { Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { tokenBalnce } from '../utils'
+import { TOKEN, tokenBalnce } from '../utils'
 
-function Balance ({token, owner, simple}: {token: string, owner?: string, simple?: boolean}) {
+function Balance ({token, owner, simple}: {token: TOKEN, owner?: string, simple?: boolean}) {
   const [balance, setBalance]= useState(0)
   
   useEffect(() => {

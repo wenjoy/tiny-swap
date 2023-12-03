@@ -1,32 +1,54 @@
+import { Card, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import TokenForm from './TokenForm'
-import { Container, Typography } from '@mui/material';
-import { getPairAddress, getSigner, mint, tokenTransfer} from '../utils';
+import { useState } from 'react';
+import { TOKEN, TOKENS, getPairAddress, getSigner, mint, tokenTransfer } from '../utils';
+import TokenForm from './TokenForm';
 
 function AddLiquidity() {
-  const token0Address = '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512'
-  const token1Address = '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9'
+
+  const [token0, setToken0] = useState<TOKEN>(TOKENS[0])
+  const [token1, setToken1] = useState<TOKEN>(TOKENS[1])
+  const [token0Value, setToken0Value] = useState(0)
+  const [token1Value, setToken1Value] = useState(0)
+  
+  function token0ChangeHandler (token: TOKEN) {
+    setToken0(token);
+  }
+
+  function token1ChangeHandler (token: TOKEN) {
+    setToken1(token);
+  }
+  
+  function token0ValueChangeHandler(value: number) {
+    setToken0Value(value)
+  }
+  function token1ValueChangeHandler(value: number) {
+    setToken1Value(value)
+  }
 
   async function addLiquidity() {
-    const value = 1100
-    const pairAddress = await getPairAddress(token0Address, token1Address);
-    console.log('AddLiquidity-11-pairAddress', pairAddress)
+    const pairAddress = await getPairAddress(token0, token1);
     const signer = await getSigner()
+    console.log('AddLiquidity-32', token0Value, token1Value)
     
-    await tokenTransfer(token0Address, value, pairAddress)
-    await tokenTransfer(token1Address, value, pairAddress)
+    await tokenTransfer(token0, token0Value, pairAddress)
+    await tokenTransfer(token1, token1Value, pairAddress)
 
     const result = await mint(pairAddress, signer)
     console.log('AddLiquidity-14-result', result)
   }
+  
+  const disabled = token0Value * token1Value === 0
 
   return <div className='AddLiquidity'>
-    <Container>
+    <Card sx={{padding: '20px'}}>
       <Typography variant='h4'>Add liquidity</Typography>
-      <TokenForm token={token0Address}/>
-      <TokenForm token={token1Address}/>
-      <Button variant='outlined' onClick={addLiquidity}>Add</Button>
-    </Container>
+      <TokenForm token={token0} onTokenChange={token0ChangeHandler} onTokenValueChange={token0ValueChangeHandler} />
+      <TokenForm token={token1} onTokenChange={token1ChangeHandler} onTokenValueChange={token1ValueChangeHandler}/>
+      <Button variant='outlined' onClick={addLiquidity} disabled={disabled}>
+        {disabled ? 'Please input value': 'Add'}
+      </Button>
+    </Card>
   </div>
 }
 export default AddLiquidity

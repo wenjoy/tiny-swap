@@ -1,16 +1,20 @@
-import { Card, CardContent, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Card, CardContent, MenuItem, Select, TextField } from '@mui/material';
+import { TOKEN, TOKENS } from '../utils';
 import Balance from './Balance';
 
-// type TokenForm = {
-//
-// }
-function TokenForm({ token }: {token: string}) {
-  return <Card sx={{margin: "20px"}} variant='outlined'>
+function TokenForm(
+  { token, onTokenChange, onTokenValueChange }:
+    {
+      token: TOKEN,
+      onTokenChange: (t: TOKEN) => void,
+      onTokenValueChange: (v: number) => void
+    },
+) {
+  return <Card sx={{ margin: "20px" }} variant='outlined'>
     <CardContent>
-      <TextField id="token0-value" label="Value" />
-      <Select>
-        <MenuItem value="ETH">ETH</MenuItem>
-        <MenuItem value="DAI">DAI</MenuItem>
+      <TextField id="token0-value" label="Value" onChange={event => onTokenValueChange(Number(event.target.value))} />
+      <Select value={token} onChange={(event) => onTokenChange(event.target.value as TOKEN)}>
+        {TOKENS.map(t => <MenuItem value={t} key={t}>{t}</MenuItem>)}
       </Select>
       <Balance token={token} />
     </CardContent>
