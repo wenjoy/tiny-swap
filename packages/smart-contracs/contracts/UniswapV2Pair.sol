@@ -77,6 +77,7 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
         kLast =0;
       }
     }
+
     function _update(uint balance0, uint balance1, uint112 _reserve0, uint112 _reserve1) private {
       require(balance0 <= uint112(-1) && balance1 <= uint112(-1), 'UniswapV2: OVERFLOW');
       uint32 blockTimestamp = uint32(block.timestamp % 2**32);
@@ -92,8 +93,8 @@ contract UniswapV2Pair is IUniswapV2Pair, UniswapV2ERC20 {
       reserve1 = uint112(balance1);
       blockTimestampLast = blockTimestamp;
       emit Sync(reserve0, reserve1);
-
     }
+
     function mint(address to) external lock returns (uint liquidity) {
       (uint112 _reserve0, uint112 _reserve1,) = getReserves();
       uint balance0 = IERC20(token0).balanceOf(address(this));
