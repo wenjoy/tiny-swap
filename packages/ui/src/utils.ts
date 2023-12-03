@@ -1,15 +1,25 @@
-import { Signer, ethers } from "ethers";
+import { ethers } from "ethers";
 import erc20ABI from "./artifactory/abi/ERC20.json";
 import factoryABI from "./artifactory/abi/UniswapV2Factory.json";
 import pairABI from "./artifactory/abi/UniswapV2Pair.json";
 
-let provider: ethers.JsonRpcProvider;
+declare global {
+  interface Window {
+    ethereum: any
+  }
+}
+
+let provider: ethers.BrowserProvider;
 
 type address = ethers.AddressLike
 
 export function getProvider() {
-  if (!provider) {
-    provider = new ethers.JsonRpcProvider();
+  if (window.ethereum == null) {
+    console.warn('Metamask not installed')
+    //TODO: resolve type issue
+    // provider = new ethers.JsonRpcProvider();
+  }else {
+    provider = new ethers.BrowserProvider(window.ethereum)
   }
   return provider;
 }
@@ -20,10 +30,10 @@ function getContract(contractAddress: address, abi: ethers.InterfaceAbi): ethers
   return contract
 }
 
-async function getContractWithSigner(contractAddress: address, abi: ethers.InterfaceAbi, signer?: Signer): Promise<ethers.Contract> {
-  const defaultSigner = await getSigner();
+async function getContractWithSigner(contractAddress: address, abi: ethers.InterfaceAbi): Promise<ethers.Contract> {
+  const signer = await getSigner();
   const contract = getContract(contractAddress, abi);
-  const contractWithSigner = contract.connect(signer ?? defaultSigner) as ethers.Contract
+  const contractWithSigner = contract.connect(signer) as ethers.Contract
   return contractWithSigner
 }
 
@@ -32,12 +42,6 @@ export async function getSigner() {
   const signer = await provider.getSigner();
   return signer
 }
-
-export function getOther() {
-  const wallet = new ethers.Wallet('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d')
-  return wallet
-}
-
 
 export function getFactoryContract() {
   const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
@@ -140,11 +144,10 @@ export async function tokenBalnce(token: TOKEN, owner?: address) {
   // console.log('utils-93-balance', balance)
   return balance
 }
-export async function tokenTransfer(token: TOKEN, value: number,to: address, from?: address) {
-  const signer = from ? getOther().connect(provider) : undefined
+export async function tokenTransfer(token: TOKEN, value: number,to: address) {
 
   const tokenAddes = tokenToAddress(token)
-  const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi, signer)
+  const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
   const result = await tokenCotract.transfer(to, value)
   console.log('utils-98-result', result)
 }

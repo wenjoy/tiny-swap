@@ -1,6 +1,6 @@
 import { Button, Card, Typography } from '@mui/material'
 import { useState } from 'react'
-import { TOKEN, TOKENS, getOther, getPairAddress, swap, tokenTransfer } from '../utils'
+import { TOKEN, TOKENS, getPairAddress, getSigner, swap, tokenTransfer } from '../utils'
 import TokenForm from './TokenForm'
 
 function Swap() {
@@ -26,9 +26,9 @@ function Swap() {
 
   async function swapHandler() {
     const pair = await getPairAddress(token0, token1)
-    const other = getOther()
-    await tokenTransfer(token0, token0Value, pair, 'from other');
-    await swap(0, token1Value, other, pair)
+    const signer = await getSigner()
+    await tokenTransfer(token0, token0Value, pair);
+    await swap(0, token1Value, signer, pair)
   }
 
   const disabled = token0Value * token1Value === 0
