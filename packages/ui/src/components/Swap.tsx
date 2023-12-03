@@ -26,19 +26,19 @@ function Swap() {
 
   async function swapHandler() {
     const pair = await getPairAddress(token0, token1)
-    // console.log(await tokenBalnce(token0Address, pair))
-    // console.log(await tokenBalnce(token1Address, pair))
-    // console.log(await getReserves(pair))
     const other = getOther()
-    await tokenTransfer(token0, 0, pair, 'from other');
-    await swap(0, 521, other, pair)
+    await tokenTransfer(token0, token0Value, pair, 'from other');
+    await swap(0, token1Value, other, pair)
   }
 
-  return <Card>
+  const disabled = token0Value * token1Value === 0
+  return <Card sx={{padding: '20px'}}>
     <Typography variant='h4'>Swap</Typography>
       <TokenForm token={token0} onTokenChange={token0ChangeHandler} onTokenValueChange={token0ValueChangeHandler} />
       <TokenForm token={token1} onTokenChange={token1ChangeHandler} onTokenValueChange={token1ValueChangeHandler}/>
-      <Button variant='outlined' onClick={swapHandler}>Swap</Button>
+      <Button variant='outlined' onClick={swapHandler} disabled={disabled}>
+        {disabled ? 'Please input value': 'Swap'}
+      </Button>
   </Card>  
 }
 

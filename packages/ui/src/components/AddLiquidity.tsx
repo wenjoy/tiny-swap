@@ -29,7 +29,6 @@ function AddLiquidity() {
   async function addLiquidity() {
     const pairAddress = await getPairAddress(token0, token1);
     const signer = await getSigner()
-    console.log('AddLiquidity-32', token0Value, token1Value)
     
     await tokenTransfer(token0, token0Value, pairAddress)
     await tokenTransfer(token1, token1Value, pairAddress)
