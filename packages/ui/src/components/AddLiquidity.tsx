@@ -38,7 +38,6 @@ function AddLiquidity() {
   }
   
   const disabled = token0Value * token1Value === 0
-
   return <div className='AddLiquidity'>
     <Card sx={{padding: '20px'}}>
       <Typography variant='h4'>Add liquidity</Typography>

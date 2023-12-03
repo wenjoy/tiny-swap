@@ -1,5 +1,5 @@
 import { Delete, StarBorder } from '@mui/icons-material';
-import { Box, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Box, Card, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { burn, getPairAddress, getPairLength, getPairShare, getSigner } from '../utils';
 
@@ -29,29 +29,31 @@ function PairList () {
     const signer = await getSigner()
     await burn(pairAddress, signer)
   }
-  return <List
-          subheader={<Box>
-             <Typography variant='h4'>Pool list</Typography>           
-             <Typography>Totals pairs: {pairTotal}</Typography>           
-          </Box>
-          }
+  return <Card sx={{padding: '20px'}}>
+    <List
+            subheader={<Box>
+               <Typography variant='h4'>Pool list</Typography>           
+               <Typography>Totals pairs: {pairTotal}</Typography>           
+            </Box>
+            }
+            >
+      {list.map(({name}) => <ListItem
+            key={name}
+            secondaryAction={<IconButton onClick={removeLiquidity}>
+              <Delete />
+            </IconButton>}
           >
-    {list.map(({name}) => <ListItem
-          key={name}
-          secondaryAction={<IconButton onClick={removeLiquidity}>
-            <Delete />
-          </IconButton>}
-        >
-          <ListItemButton>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary={name} />
-            <ListItemText primary={`Share: ${share.toString()}`} />
-          </ListItemButton>
-        </ListItem>
-    )}
-  </List>
+            <ListItemButton>
+              <ListItemIcon>
+                <StarBorder />
+              </ListItemIcon>
+              <ListItemText primary={name} />
+              <ListItemText primary={`Share: ${share.toString()}`} />
+            </ListItemButton>
+          </ListItem>
+      )}
+    </List>
+  </Card>
 }
 
 export default PairList
