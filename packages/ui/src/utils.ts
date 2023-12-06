@@ -66,6 +66,7 @@ export async function getPairAddress(token0: TOKEN, token1: TOKEN): Promise<stri
     const pair = await contract.getPair(token0Address, token1Address)
     return pair
   }catch(err) {
+    console.error(err)
     throw Error('NO MATCHED PAIR')
   }
 }
@@ -98,6 +99,21 @@ export async function getPairShare(pair: address) {
 //   return pair
 // }
 
+async function isFirstDeposit (pair: address) {
+  const pairContract = await getContractWithSigner(pair, pairABI.abi);
+  const totalSupply = await pairContract.totalSupply();
+  return totalSupply===0;
+}
+export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1: TOKEN, tokenAmount: string): Promise<string> {
+  const pair = await getPairAddress(token0, token1)
+  if(await isFirstDeposit(pair)) {
+    return ''
+  }else {
+    const [reserve0, reserve1] = await getReserves(pair)
+    const anotherTokenAmount = Number(tokenAmount) * Number(reserve0) / Number(reserve1)
+    return anotherTokenAmount.toString()
+  }
+}
 export async function mint(pair: address, to: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
   const result = await pairContract.mint(to)
@@ -125,27 +141,26 @@ export async function swap(amount0Out: number, amount1Out: number, to: address, 
 
 export async function getReserves(pair: address) {
   const pairContract = await getContract(pair, pairABI.abi)
-  const result = await pairContract.getReserves()
-  console.log('utils-119-result', result)
-  return result
+  const decimals = await pairContract.decimals();
+  const reserves = await pairContract.getReserves()
+  return reserves.map((reserve: number)=> ethers.formatUnits(reserve, decimals))
 }
-
-// export async function tokenMint(token: address, value: number) {
-//   const tokenCotract = await getContractWithSigner(token, erc20ABI.abi)
-//   const result = await tokenCotract.mint(value)
-//   console.log('utils-79-result', result)
-// }
 
 //TOKEN specific
 export async function tokenBalnce(token: TOKEN, owner?: address) {
   const tokenAddress = tokenToAddress(token)
   const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
+  const decimals = await tokenCotract.decimals();
   const balance = await tokenCotract.balanceOf(owner ?? await getSigner())
-  // console.log('utils-93-balance', balance)
-  return balance
+  return ethers.formatUnits(balance, decimals)
 }
-export async function tokenTransfer(token: TOKEN, value: number,to: address) {
-
+export async function tokenDeciamls(token: TOKEN) {
+  const tokenAddress = tokenToAddress(token)
+  const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
+  const decimals = await tokenCotract.decimals();
+  return decimals
+}
+export async function tokenTransfer(token: TOKEN, value: BigInt,to: address) {
   const tokenAddes = tokenToAddress(token)
   const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
   const result = await tokenCotract.transfer(to, value)

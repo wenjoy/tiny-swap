@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { TOKEN, tokenBalnce } from '../utils'
 
 function Balance ({token, owner, simple}: {token: TOKEN, owner?: string, simple?: boolean}) {
-  const [balance, setBalance]= useState(0)
+  const [balance, setBalance]= useState('')
   
   useEffect(() => {
     async function fetchBalance() {
@@ -17,7 +17,7 @@ function Balance ({token, owner, simple}: {token: TOKEN, owner?: string, simple?
     fetchBalance().catch(err => console.error(err))
   }, [])
 
-  return <Typography>{simple? '': 'Balance: '}{balance.toString()}</Typography>
+  return <Typography>{simple? '': 'Balance: '}{balance}</Typography>
 }
 
 export default Balance
