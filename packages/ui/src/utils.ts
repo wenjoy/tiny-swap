@@ -120,8 +120,8 @@ export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1:
 
 export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount: string) {
   const pair = await getPairAddress(token0, token1)
-  const balance0 = await tokenBalnce(token0, pair)
-  const balance1 = await tokenBalnce(token1, pair)
+  const balance0 = await tokenBalnce(tokenToAddress(token0), pair)
+  const balance1 = await tokenBalnce(tokenToAddress(token1), pair)
   const [reserve0, reserve1] = await getReserves(pair)
   
   const b0 = Number(balance0)
@@ -131,7 +131,7 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
   const i = Number(tokenInAmount)
   //NOTE: this can be wrong, if someone donation
   // const tokenOutAmount = Number(balance1) - Number(reserve0) * Number(reserve1 )/ (Number(balance0)+ Number(tokenInAmount)*0.997)
-  const tokenOutAmount = b1 - r0*r1/(b0+0.997*i)
+  const tokenOutAmount = b1-r0*r1/(b0+0.997*i)
   return tokenOutAmount.toString()
 }
 export async function mint(pair: address, to: address) {
@@ -169,8 +169,7 @@ export async function getReserves(pair: address) {
 }
 
 //TOKEN specific
-export async function tokenBalnce(token: TOKEN, owner?: address) {
-  const tokenAddress = tokenToAddress(token)
+export async function tokenBalnce(tokenAddress: address, owner?: address) {
   const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
   const decimals = await tokenCotract.decimals();
   const balance = await tokenCotract.balanceOf(owner ?? await getSigner())
@@ -203,9 +202,8 @@ export async function tokenTransferFrom(token: TOKEN, value: string, from: addre
 /**
  * why not just TOKENS = {DAI: '0x11', DOGE: '0x22'}, will this better?
  */
-export const UNISWAP =  'UNISWAP'
 export const TOKENS = ['DAI', 'DOGE'] as const
-export type TOKEN = (typeof TOKENS)[number] | (typeof UNISWAP)
+export type TOKEN = (typeof TOKENS)[number]
 
 const TOKENADDRESS = ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9']
 

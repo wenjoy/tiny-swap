@@ -1,5 +1,5 @@
 import { Card, CardContent, MenuItem, Select, TextField } from '@mui/material';
-import { TOKEN, TOKENS } from '../utils';
+import { TOKEN, TOKENS, tokenToAddress } from '../utils';
 import Balance from './Balance';
 
 function TokenForm(
@@ -18,7 +18,7 @@ function TokenForm(
       <Select value={token} onChange={(event) => onTokenChange(event.target.value as TOKEN)}>
         {TOKENS.map(t => <MenuItem value={t} key={t}>{t}</MenuItem>)}
       </Select>
-      <Balance token={token} />
+      <Balance token={tokenToAddress(token)} />
     </CardContent>
   </Card>
 }

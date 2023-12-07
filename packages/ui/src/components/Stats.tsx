@@ -1,7 +1,7 @@
 import styled from '@emotion/styled'
 import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { TOKEN, getPairAddress, getReserves } from '../utils'
+import { getPairAddress, getReserves, tokenToAddress } from '../utils'
 import Balance from './Balance'
 
 function Stats() {
@@ -10,7 +10,7 @@ function Stats() {
   const account1 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
   const account2 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
   const [accounts, setAccounts] = useState<string[]>([])
-  const [contracts, setContracts] = useState<TOKEN[]>([])
+  const [contracts, setContracts] = useState<string[]>([])
   const [reserves, setReserves] = useState<BigInt[]>([])
   const tokensName=[token0, token1, 'UNISWAP']
   console.log('Stats-15-reserves', reserves)
@@ -20,7 +20,7 @@ function Stats() {
       const pair = await getPairAddress(token0, token1)
       const reserves = await getReserves(pair);
       setAccounts([pair, account1, account2])
-      setContracts([token0, token1, 'UNISWAP'])
+      setContracts([tokenToAddress(token0), tokenToAddress(token1), pair])
       setReserves(reserves)
     }
     fetchAddress().catch(err => console.error(err))
