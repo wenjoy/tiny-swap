@@ -3,7 +3,7 @@ import { Box, Card, IconButton, List, ListItem, ListItemButton, ListItemIcon, Li
 import { useEffect, useState } from 'react';
 import { burn, getPairAddress, getPairLength, getPairShare, getSigner } from '../utils';
 
-function PairList () {
+function RemoveLiquidity () {
   const [pairTotal, setPairTotal] = useState(0)
   const [share, setShare] = useState(0)
   const token0 = 'DAI'
@@ -56,4 +56,4 @@ function PairList () {
   </Card>
 }
 
-export default PairList
+export default RemoveLiquidity

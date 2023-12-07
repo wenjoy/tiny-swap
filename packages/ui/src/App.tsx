@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import './App.css';
 import Account from './components/Account';
 import AddLiquidity from './components/AddLiquidity';
-import PairList from './components/PairList';
+import RemoveLiquidity from './components/RemoveLiquidity';
 import Stats from './components/Stats';
 import Swap from './components/Swap';
 
@@ -23,7 +23,7 @@ function App() {
             <AddLiquidity />
           </Grid>
           <Grid item xs={6}>
-            <PairList />
+            <RemoveLiquidity />
           </Grid>
           <Grid item xs={6}>
             <Swap />
