@@ -102,15 +102,18 @@ export async function getPairShare(pair: address) {
 async function isFirstDeposit (pair: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
   const totalSupply = await pairContract.totalSupply();
-  return totalSupply===0;
+  return totalSupply=== BigInt(0);
 }
 export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1: TOKEN, tokenAmount: string): Promise<string> {
   const pair = await getPairAddress(token0, token1)
+  const reverse = tokenToAddress(token0) < tokenToAddress(token1) ? false : true
   if(await isFirstDeposit(pair)) {
     return ''
   }else {
     const [reserve0, reserve1] = await getReserves(pair)
-    const anotherTokenAmount = Number(tokenAmount) * Number(reserve0) / Number(reserve1)
+    const numerator = reverse ? Number(tokenAmount) * Number(reserve1) : Number(tokenAmount) * Number(reserve0) 
+    const denominator = reverse ? Number(reserve0 ): Number(reserve1)
+    const anotherTokenAmount = numerator / denominator
     return anotherTokenAmount.toString()
   }
 }

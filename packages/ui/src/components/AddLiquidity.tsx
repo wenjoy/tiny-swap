@@ -19,25 +19,24 @@ function AddLiquidity() {
   function token0ChangeHandler (token: TOKEN) {
     setToken0(token);
   }
-
   function token1ChangeHandler (token: TOKEN) {
     setToken1(token);
   }
   
   async function token0ValueChangeHandler(value: string) {
-    setToken0Value(value)
-    const token1Value = await calculateMinTokenAmountForLiquidity(token0, token1, value)
-    setToken1Value(token1Value)
+    const otherValue = await calculateMinTokenAmountForLiquidity(token0, token1, value)
+    setTokensValue(setToken0Value, setToken1Value, value, otherValue)
   }
   async function token1ValueChangeHandler(value: string) {
-    setToken1Value(value)
-    const token0Value = await calculateMinTokenAmountForLiquidity(token0, token1, value)
-    setToken0Value(token0Value)
+    const otherValue = await calculateMinTokenAmountForLiquidity(token1, token0, value)
+    setTokensValue(setToken1Value, setToken0Value, value, otherValue)
   }
   
-  //TODO: refactor
-  async function tokenValueChangeHandler(value: number) {
-
+  async function setTokensValue(setFn: (value: React.SetStateAction<string>) => void, setOtherFn: (value: React.SetStateAction<string>) => void, value: string, otherValue: string) {
+    setFn(value);
+    if(otherValue) {
+      setOtherFn(otherValue)
+    }
   }
 
   async function addLiquidity() {
