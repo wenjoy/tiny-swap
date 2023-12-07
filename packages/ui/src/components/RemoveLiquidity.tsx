@@ -22,7 +22,7 @@ function RemoveLiquidity() {
       setShare(share)
     }
     fetchPairLength().catch(err => console.error(err))
-  }, [])
+  }, [token0, token1])
 
   async function removeLiquidity() {
     const pairAddress = await getPairAddress(token0, token1);
