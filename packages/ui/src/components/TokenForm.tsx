@@ -3,17 +3,18 @@ import { TOKEN, TOKENS } from '../utils';
 import Balance from './Balance';
 
 function TokenForm(
-  { token, onTokenChange, tokenValue, onTokenValueChange }:
+  { token, onTokenChange, tokenValue, onTokenValueChange, disabled }:
     {
       token: TOKEN,
       onTokenChange: (t: TOKEN) => void,
       tokenValue: string,
-      onTokenValueChange: (v: string) => void
+      onTokenValueChange: (v: string) => void,
+      disabled?: boolean
     },
 ) {
   return <Card sx={{ margin: "20px" }} variant='outlined'>
     <CardContent>
-      <TextField placeholder='0.0' id="token0-value" label="Amount" type="number" value={tokenValue} onChange={event => onTokenValueChange(event.target.value)} />
+      <TextField disabled={disabled} placeholder='0.0' id="token0-value" label="Amount" type="number" value={tokenValue} onChange={event => onTokenValueChange(event.target.value)} />
       <Select value={token} onChange={(event) => onTokenChange(event.target.value as TOKEN)}>
         {TOKENS.map(t => <MenuItem value={t} key={t}>{t}</MenuItem>)}
       </Select>

@@ -1,11 +1,11 @@
 import { Card, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import { ethers } from 'ethers';
 import { useState } from 'react';
 import {
   TOKEN, TOKENS,
   calculateMinTokenAmountForLiquidity, getPairAddress, getSigner,
-  mint, tokenDeciamls, tokenTransfer
+  mint,
+  tokenTransfer
 } from '../utils';
 import TokenForm from './TokenForm';
 
@@ -51,14 +51,9 @@ function AddLiquidity() {
   async function addLiquidity() {
     const pairAddress = await getPairAddress(token0, token1);
     const signer = await getSigner()
-    const token0Decimal = await tokenDeciamls(token0)
-    const token1Decimal = await tokenDeciamls(token1)
     
-    const amount0In = ethers.parseUnits(token0Value, token0Decimal);
-    const amount1In = ethers.parseUnits(token1Value, token1Decimal);
-    
-    await tokenTransfer(token0, amount0In, pairAddress)
-    await tokenTransfer(token1, amount1In, pairAddress)
+    await tokenTransfer(token0, token0Value, pairAddress)
+    await tokenTransfer(token1, token1Value, pairAddress)
 
     const result = await mint(pairAddress, signer)
     console.log('AddLiquidity-14-result', result)

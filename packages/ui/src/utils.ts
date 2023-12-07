@@ -117,6 +117,23 @@ export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1:
     return anotherTokenAmount.toString()
   }
 }
+
+export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount: string) {
+  const pair = await getPairAddress(token0, token1)
+  const balance0 = await tokenBalnce(token0, pair)
+  const balance1 = await tokenBalnce(token1, pair)
+  const [reserve0, reserve1] = await getReserves(pair)
+  
+  const b0 = Number(balance0)
+  const b1 = Number(balance1)
+  const r0 = Number(reserve0)
+  const r1 = Number(reserve1)
+  const i = Number(tokenInAmount)
+  //NOTE: this can be wrong, if someone donation
+  // const tokenOutAmount = Number(balance1) - Number(reserve0) * Number(reserve1 )/ (Number(balance0)+ Number(tokenInAmount)*0.997)
+  const tokenOutAmount = b1 - r0*r1/(b0+0.997*i)
+  return tokenOutAmount.toString()
+}
 export async function mint(pair: address, to: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
   const result = await pairContract.mint(to)
@@ -136,10 +153,11 @@ export async function burn(pair: address, to: address) {
   console.log('utils-98-result', result)
 }
 
-export async function swap(amount0Out: number, amount1Out: number, to: address, pair: address) {
+export async function swap(token: TOKEN, value: string, to: address, pair: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi)
-  console.log('utils-111', 'debug-------------------')
-  const result = await pairContract.swap(amount0Out, amount1Out, to, '0x')
+  const tokenDecimal = await tokenDeciamls(token)
+  const amountOut = ethers.parseUnits(value, tokenDecimal);
+  const result = await pairContract.swap(0, amountOut, to, '0x')
   console.log('utils-112-result', result)
 }
 
@@ -164,19 +182,30 @@ export async function tokenDeciamls(token: TOKEN) {
   const decimals = await tokenCotract.decimals();
   return decimals
 }
-export async function tokenTransfer(token: TOKEN, value: BigInt,to: address) {
+export async function tokenTransfer(token: TOKEN, value: string,to: address) {
+  const tokenDecimal = await tokenDeciamls(token)
+  const amount = ethers.parseUnits(value, tokenDecimal);
   const tokenAddes = tokenToAddress(token)
   const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
-  const result = await tokenCotract.transfer(to, value)
-  console.log('utils-98-result', result)
+  const result = await tokenCotract.transfer(to, amount)
+  return result
+}
+
+export async function tokenTransferFrom(token: TOKEN, value: string, from: address, to: address) {
+  const tokenDecimal = await tokenDeciamls(token)
+  const amount = ethers.parseUnits(value, tokenDecimal);
+  const tokenAddes = tokenToAddress(token)
+  const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
+  const result = await tokenCotract.transferFrom(from, to, amount)
+  console.log('utils-195-result', result)
 }
 
 /**
  * why not just TOKENS = {DAI: '0x11', DOGE: '0x22'}, will this better?
  */
+export const UNISWAP =  'UNISWAP'
 export const TOKENS = ['DAI', 'DOGE'] as const
-//TODO: refine this type, it's not right extend enumric with genric type `string`
-export type TOKEN = (typeof TOKENS)[number] | string
+export type TOKEN = (typeof TOKENS)[number] | (typeof UNISWAP)
 
 const TOKENADDRESS = ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9']
 
@@ -188,4 +217,8 @@ TOKENS.forEach((token, index)=> {
 export function tokenToAddress(token: TOKEN): string {
   const ret = tokenMap.get(token)
   return ret ?? token;
+}
+
+export function wait(ms: number) {
+  return new Promise((r) => setTimeout(r, ms))
 }

@@ -30,7 +30,13 @@ async function main() {
   await token1.transfer(other, out)
   console.log('token1 balance', await token1.balanceOf(other))
   
-  factory.createPair(token0, token1);
+  const token0Address = await token0.getAddress()
+  const token1Address = await token1.getAddress()
+  await factory.createPair(token0Address, token1Address)
+
+  const pairAddress = await factory.getPair(token0Address, token1Address);
+  const result = await token0.approve(other, uintTransform(1000))
+  console.log('deploy-38-result', pairAddress)
 }
 
 main()

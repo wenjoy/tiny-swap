@@ -10,8 +10,9 @@ function Stats() {
   const account1 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
   const account2 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
   const [accounts, setAccounts] = useState<string[]>([])
-  const [contracts, setContracts] = useState<TOKEN[]|string[]>([])
-  const [reserves, setServes] = useState<BigInt[]>([])
+  const [contracts, setContracts] = useState<TOKEN[]>([])
+  const [reserves, setReserves] = useState<BigInt[]>([])
+  const tokensName=[token0, token1, 'UNISWAP']
   console.log('Stats-15-reserves', reserves)
 
   useEffect(() => {
@@ -19,8 +20,8 @@ function Stats() {
       const pair = await getPairAddress(token0, token1)
       const reserves = await getReserves(pair);
       setAccounts([pair, account1, account2])
-      setContracts([token0, token1, pair])
-      setServes(reserves)
+      setContracts([token0, token1, 'UNISWAP'])
+      setReserves(reserves)
     }
     fetchAddress().catch(err => console.error(err))
   }, [])
@@ -35,13 +36,15 @@ function Stats() {
       <Table sx={{minWidth: 500}} aria-label="simple table">
         <TableHead>
           <TableRow>
+            <TableCell></TableCell>            
             <TableCell>Pair</TableCell>            
             <TableCell>Account1</TableCell>            
             <TableCell>Account2</TableCell>            
           </TableRow>
         </TableHead>
         <TableBody>
-          {contracts.map((contract) => <TableRow key={contract}>
+          {contracts.map((contract,index) => <TableRow key={contract}>
+              <TableCell>{tokensName[index]}</TableCell>
               {
                 accounts.map((account) => <TableCell key={account}>
                       <Balance token={contract} owner={account} simple />
