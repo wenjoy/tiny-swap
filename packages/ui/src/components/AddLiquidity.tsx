@@ -18,9 +18,18 @@ function AddLiquidity() {
   
   function token0ChangeHandler (token: TOKEN) {
     setToken0(token);
-  }
+
+    //TODO: token change should recalculate value also
+    if(token === token1) {
+      setToken1(token0)
+    }
+   }
   function token1ChangeHandler (token: TOKEN) {
     setToken1(token);
+
+    if(token === token0) {
+      setToken0(token1)
+    }
   }
   
   async function token0ValueChangeHandler(value: string) {

@@ -15,7 +15,7 @@ function Balance ({token, owner, simple}: {token: TOKEN, owner?: string, simple?
       // }, 10000);
     }
     fetchBalance().catch(err => console.error(err))
-  }, [])
+  }, [token])
 
   return <Typography>{simple? '': 'Balance: '}{balance}</Typography>
 }
