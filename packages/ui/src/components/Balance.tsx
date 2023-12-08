@@ -1,13 +1,13 @@
 import { Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { tokenBalnce } from '../utils'
+import { tokenBalance } from '../utils'
 
 function Balance ({token: tokenAddress, owner, simple}: {token: string, owner?: string, simple?: boolean}) {
   const [balance, setBalance]= useState('')
   
   useEffect(() => {
     async function fetchBalance() {
-      const balance = await tokenBalnce(tokenAddress, owner)
+      const balance = await tokenBalance(tokenAddress, owner)
       setBalance(balance)
       // Disable continously fetch temporarily
       // setTimeout(() => {

@@ -61,7 +61,6 @@ export async function getFactoryContractWithSigner() {
 export async function getPairAddress(token0: TOKEN, token1: TOKEN): Promise<string> {
   const token0Address = tokenToAddress(token0)
   const token1Address = tokenToAddress(token1)
-    console.log('RemoveLiquidity-18', token0Address, token1Address)
   const factory = getFactoryContract()
   try {
     const pair = await factory.getPair(token0Address, token1Address)
@@ -122,8 +121,8 @@ export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1:
 
 export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount: string) {
   const pair = await getPairAddress(token0, token1)
-  const balance0 = await tokenBalnce(tokenToAddress(token0), pair)
-  const balance1 = await tokenBalnce(tokenToAddress(token1), pair)
+  const balance0 = await tokenBalance(tokenToAddress(token0), pair)
+  const balance1 = await tokenBalance(tokenToAddress(token1), pair)
   const [reserve0, reserve1] = await getReserves(pair)
   
   const b0 = Number(balance0)
@@ -171,8 +170,15 @@ export async function getReserves(pair: address) {
   return reserves.map((reserve: number)=> ethers.formatUnits(reserve, decimals))
 }
 
+export async function withDrawToken0(pair: address, token:TOKEN, to: address, value: string) {
+  const pairContract = await getContractWithSigner(pair, pairABI.abi)
+  const tokenDecimal = await tokenDeciamls(token)
+  const result = await pairContract.withdrawToken0(to, ethers.parseUnits(value, tokenDecimal))
+  return result
+}  
+
 //TOKEN specific
-export async function tokenBalnce(tokenAddress: address, owner?: address) {
+export async function tokenBalance(tokenAddress: address, owner?: address) {
   const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
   const decimals = await tokenCotract.decimals();
   const balance = await tokenCotract.balanceOf(owner ?? await getSigner())

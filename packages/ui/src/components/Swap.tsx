@@ -1,6 +1,6 @@
 import { Button, Card, Typography } from '@mui/material'
 import { useState } from 'react'
-import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenTransfer, wait } from '../utils'
+import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils'
 import TokenForm from './TokenForm'
 
 function Swap() {
@@ -45,6 +45,8 @@ function Swap() {
   async function swapHandler() {
     const pair = await getPairAddress(token0, token1)
     const to = await getSigner()
+    console.log('Swap-48-en0', token0, token0Value)
+    console.log('Token balance', await tokenBalance(tokenToAddress(token0)), await tokenBalance(tokenToAddress(token1)))
     const result = await tokenTransfer(token0, token0Value, pair)
     console.log('Swap-49-result', result)
     const provider = await getProvider()
@@ -58,10 +60,10 @@ function Swap() {
     try {
       await swap(token1, token1Value, to, pair)
     }catch(err) {
-      console.error(err)
+      console.error("Switch error: ", err)
       //TODO: manually revert is not right
-      // const resutl = await tokenTransferFrom(token0, token0Value, pair, to);
-      // console.log('Swap-65-resutl', resutl)
+      const resutl = await withDrawToken0(pair, token0, to, token0Value);
+      console.log('Swap-65-resutl', resutl)
     }
   }
 

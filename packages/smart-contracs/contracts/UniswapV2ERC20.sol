@@ -55,7 +55,7 @@ contract UniswapV2ERC20 is IUniswapV2ERC20 {
   }
   
   function _transfer(address from, address to, uint value) private {
-    console.log('UniswapV2ERC20-57', from, to);
+    console.log('UniswapV2ERC20-57', from, to, value);
     balanceOf[from] = balanceOf[from].sub(value);
     balanceOf[to] = balanceOf[to].add(value);
     emit Transfer(from, to, value);
