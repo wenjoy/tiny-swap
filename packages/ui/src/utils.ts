@@ -61,9 +61,11 @@ export async function getFactoryContractWithSigner() {
 export async function getPairAddress(token0: TOKEN, token1: TOKEN): Promise<string> {
   const token0Address = tokenToAddress(token0)
   const token1Address = tokenToAddress(token1)
-  const contract = getFactoryContract()
+    console.log('RemoveLiquidity-18', token0Address, token1Address)
+  const factory = getFactoryContract()
   try {
-    const pair = await contract.getPair(token0Address, token1Address)
+    const pair = await factory.getPair(token0Address, token1Address)
+    console.log('utils-68-pair', pair)
     return pair
   }catch(err) {
     console.error(err)
@@ -132,7 +134,8 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
   //NOTE: this can be wrong, if someone donation
   // const tokenOutAmount = Number(balance1) - Number(reserve0) * Number(reserve1 )/ (Number(balance0)+ Number(tokenInAmount)*0.997)
   const tokenOutAmount = b1-r0*r1/(b0+0.997*i)
-  return tokenOutAmount.toString()
+  // in case circulating decimal lead to out amount larger than should be
+  return (Math.floor(tokenOutAmount*1000)/1000).toString()
 }
 export async function mint(pair: address, to: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
