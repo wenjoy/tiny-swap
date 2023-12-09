@@ -1,5 +1,5 @@
-import { Grid } from '@mui/material';
-import './App.css';
+import { AppBar, Box, Container, Grid, Link, Toolbar, Typography } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
 import Account from './components/Account';
 import AddLiquidity from './components/AddLiquidity';
 import RemoveLiquidity from './components/RemoveLiquidity';
@@ -7,18 +7,28 @@ import Stats from './components/Stats';
 import Swap from './components/Swap';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <span className="logo">Uniswap</span>
-        <div className="menu">
-        <span className="menu-item"><a href="/swap">Swap</a></span>
-        <span className="menu-item"><a href="/pool">Pool</a></span>
-        </div>
-        <Account />
-      </header>
+  const routes = [
+    { href: '/swap', name: 'Swap' },
+    { href: '/pool', name: 'Pool' },
+  ]
 
-      <Grid container spacing={3} sx={{mt: '20px'}}>
+  return (
+    <>
+      <CssBaseline />
+      <Container maxWidth="md">
+        <AppBar position='static'>
+          <Toolbar>
+            <Typography variant='h6'>Tinyswap</Typography>
+            <Box sx={{ flexGrow: 1 }}>
+              {routes.map(({ href, name }) =>
+                <Link key={name} sx={{ ml: 2 }} href={href} color="#fff" underline='none'>{name}</Link>
+              )}
+            </Box>
+            <Account />
+          </Toolbar>
+        </AppBar>
+
+        <Grid container spacing={3} sx={{ mt: '20px' }}>
           <Grid item xs={6}>
             <AddLiquidity />
           </Grid>
@@ -32,7 +42,8 @@ function App() {
             <Stats />
           </Grid>
         </Grid>
-    </div>
+      </Container>
+    </>
   );
 }
 
