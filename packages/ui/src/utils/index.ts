@@ -1,7 +1,8 @@
 import { ethers } from "ethers";
-import erc20ABI from "./artifactory/abi/ERC20.json";
-import factoryABI from "./artifactory/abi/UniswapV2Factory.json";
-import pairABI from "./artifactory/abi/UniswapV2Pair.json";
+import erc20ABI from "../artifactory/abi/ERC20.json";
+import factoryABI from "../artifactory/abi/UniswapV2Factory.json";
+import pairABI from "../artifactory/abi/UniswapV2Pair.json";
+import { TOKEN_A, TOKEN_B } from './const';
 
 declare global {
   interface Window {
@@ -18,7 +19,7 @@ export function getProvider() {
     console.warn('Metamask not installed')
     //TODO: resolve type issue
     // provider = new ethers.JsonRpcProvider();
-  }else {
+  } else {
     provider = new ethers.BrowserProvider(window.ethereum)
   }
   return provider;
@@ -66,7 +67,7 @@ export async function getPairAddress(token0: TOKEN, token1: TOKEN): Promise<stri
     const pair = await factory.getPair(token0Address, token1Address)
     console.log('utils-68-pair', pair)
     return pair
-  }catch(err) {
+  } catch (err) {
     console.error(err)
     throw Error('NO MATCHED PAIR')
   }
@@ -84,7 +85,7 @@ export async function getPairShare(pair: address) {
   const total = await pairContract.totalSupply()
   const balance = await pairContract.balanceOf(signer)
   // console.log('utils-68-total', total, balance, balance/total)
-  return total ==0 ? 0 : Number(balance) / Number(total)
+  return total == 0 ? 0 : Number(balance) / Number(total)
 }
 // export async function createPair(token0Address: address, token1Address: address): Promise<address> {
 //   const contract = await getFactoryContractWithSigner()
@@ -100,20 +101,20 @@ export async function getPairShare(pair: address) {
 //   return pair
 // }
 
-async function isFirstDeposit (pair: address) {
+async function isFirstDeposit(pair: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
   const totalSupply = await pairContract.totalSupply();
-  return totalSupply=== BigInt(0);
+  return totalSupply === BigInt(0);
 }
 export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1: TOKEN, tokenAmount: string): Promise<string> {
   const pair = await getPairAddress(token0, token1)
   const reverse = tokenToAddress(token0) < tokenToAddress(token1) ? false : true
-  if(await isFirstDeposit(pair)) {
+  if (await isFirstDeposit(pair)) {
     return ''
-  }else {
+  } else {
     const [reserve0, reserve1] = await getReserves(pair)
-    const numerator = reverse ? Number(tokenAmount) * Number(reserve1) : Number(tokenAmount) * Number(reserve0) 
-    const denominator = reverse ? Number(reserve0 ): Number(reserve1)
+    const numerator = reverse ? Number(tokenAmount) * Number(reserve1) : Number(tokenAmount) * Number(reserve0)
+    const denominator = reverse ? Number(reserve0) : Number(reserve1)
     const anotherTokenAmount = numerator / denominator
     return anotherTokenAmount.toString()
   }
@@ -124,7 +125,7 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
   const balance0 = await tokenBalance(tokenToAddress(token0), pair)
   const balance1 = await tokenBalance(tokenToAddress(token1), pair)
   const [reserve0, reserve1] = await getReserves(pair)
-  
+
   const b0 = Number(balance0)
   const b1 = Number(balance1)
   const r0 = Number(reserve0)
@@ -132,9 +133,9 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
   const i = Number(tokenInAmount)
   //NOTE: this can be wrong, if someone donation
   // const tokenOutAmount = Number(balance1) - Number(reserve0) * Number(reserve1 )/ (Number(balance0)+ Number(tokenInAmount)*0.997)
-  const tokenOutAmount = b1-r0*r1/(b0+0.997*i)
+  const tokenOutAmount = b1 - r0 * r1 / (b0 + 0.997 * i)
   // in case circulating decimal lead to out amount larger than should be
-  return (Math.floor(tokenOutAmount*1000)/1000).toString()
+  return (Math.floor(tokenOutAmount * 1000) / 1000).toString()
 }
 export async function mint(pair: address, to: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
@@ -167,22 +168,23 @@ export async function getReserves(pair: address) {
   const pairContract = await getContract(pair, pairABI.abi)
   const decimals = await pairContract.decimals();
   const reserves = await pairContract.getReserves()
-  return reserves.map((reserve: number)=> ethers.formatUnits(reserve, decimals))
+  return reserves.map((reserve: number) => toPrecision(parseFloat(ethers.formatUnits(reserve, decimals))))
 }
 
-export async function withDrawToken0(pair: address, token:TOKEN, to: address, value: string) {
+export async function withDrawToken0(pair: address, token: TOKEN, to: address, value: string) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi)
   const tokenDecimal = await tokenDeciamls(token)
   const result = await pairContract.withdrawToken0(to, ethers.parseUnits(value, tokenDecimal))
   return result
-}  
+}
 
 //TOKEN specific
 export async function tokenBalance(tokenAddress: address, owner?: address) {
   const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
   const decimals = await tokenCotract.decimals();
   const balance = await tokenCotract.balanceOf(owner ?? await getSigner())
-  return ethers.formatUnits(balance, decimals)
+  const result = ethers.formatUnits(balance, decimals)
+  return toPrecision(parseFloat(result))
 }
 export async function tokenDeciamls(token: TOKEN) {
   const tokenAddress = tokenToAddress(token)
@@ -190,7 +192,7 @@ export async function tokenDeciamls(token: TOKEN) {
   const decimals = await tokenCotract.decimals();
   return decimals
 }
-export async function tokenTransfer(token: TOKEN, value: string,to: address) {
+export async function tokenTransfer(token: TOKEN, value: string, to: address) {
   const tokenDecimal = await tokenDeciamls(token)
   const amount = ethers.parseUnits(value, tokenDecimal);
   const tokenAddes = tokenToAddress(token)
@@ -211,13 +213,13 @@ export async function tokenTransferFrom(token: TOKEN, value: string, from: addre
 /**
  * why not just TOKENS = {DAI: '0x11', DOGE: '0x22'}, will this better?
  */
-export const TOKENS = ['DAI', 'DOGE'] as const
+export const TOKENS = [TOKEN_A, TOKEN_B] as const
 export type TOKEN = (typeof TOKENS)[number]
 
 const TOKENADDRESS = ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9']
 
 const tokenMap = new Map<TOKEN, string>()
-TOKENS.forEach((token, index)=> {
+TOKENS.forEach((token, index) => {
   tokenMap.set(token, TOKENADDRESS[index]);
 })
 
@@ -228,4 +230,8 @@ export function tokenToAddress(token: TOKEN): string {
 
 export function wait(ms: number) {
   return new Promise((r) => setTimeout(r, ms))
+}
+
+function toPrecision(value: number, decimal?: number) {
+  return value.toPrecision(decimal ?? 8)
 }

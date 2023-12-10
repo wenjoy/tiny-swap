@@ -2,9 +2,9 @@ import { Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { tokenBalance } from '../utils'
 
-function Balance ({token: tokenAddress, owner, simple}: {token: string, owner?: string, simple?: boolean}) {
-  const [balance, setBalance]= useState('')
-  
+function Balance({ token: tokenAddress, owner, simple }: { token: string, owner?: string, simple?: boolean }) {
+  const [balance, setBalance] = useState('')
+
   useEffect(() => {
     async function fetchBalance() {
       const balance = await tokenBalance(tokenAddress, owner)
@@ -17,7 +17,7 @@ function Balance ({token: tokenAddress, owner, simple}: {token: string, owner?: 
     fetchBalance().catch(err => console.error(err))
   }, [tokenAddress])
 
-  return <Typography>{simple? '': 'Balance: '}{balance}</Typography>
+  return <Typography align='right'>{simple ? '' : 'Balance: '}{balance}</Typography>
 }
 
 export default Balance

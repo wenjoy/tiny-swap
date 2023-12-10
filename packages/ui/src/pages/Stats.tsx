@@ -3,10 +3,11 @@ import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow
 import { useEffect, useState } from 'react'
 import Balance from '../components/Balance'
 import { getPairAddress, getReserves, tokenToAddress } from '../utils'
+import { TOKEN_A, TOKEN_B } from '../utils/const'
 
 function Stats() {
-  const token0 = 'DAI'
-  const token1 = 'DOGE'
+  const token0 = TOKEN_A
+  const token1 = TOKEN_B
   const account1 = '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266'
   const account2 = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
   const [accounts, setAccounts] = useState<string[]>([])
@@ -32,7 +33,7 @@ function Stats() {
     }
   }))
 
-  return <TableContainer component={Paper}>
+  return <TableContainer component={Paper} sx={{ mt: 2 }}>
     <Table sx={{ minWidth: 500 }} aria-label="simple table">
       <TableHead>
         <TableRow>

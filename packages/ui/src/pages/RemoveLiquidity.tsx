@@ -1,16 +1,17 @@
-import { Delete, StarBorder } from '@mui/icons-material';
-import { Box, Card, IconButton, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography } from '@mui/material';
+import { Delete } from '@mui/icons-material';
+import { Card, IconButton, List, ListItem, ListItemText } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { burn, getPairAddress, getPairLength, getPairShare, getSigner } from '../utils';
+import { TOKEN_A, TOKEN_B } from '../utils/const';
 
 function RemoveLiquidity() {
   const [pairTotal, setPairTotal] = useState(0)
   const [share, setShare] = useState(0)
-  const token0 = 'DAI'
-  const token1 = 'DOGE'
+  const token0 = TOKEN_A
+  const token1 = TOKEN_B
 
   const list = [
-    { name: 'DAI/DOGE' }
+    { name: `${token0} / ${token1}` }
   ]
 
   useEffect(() => {
@@ -31,26 +32,18 @@ function RemoveLiquidity() {
   }
   return <Card sx={{ padding: '20px' }}>
     {pairTotal > 0 ?
-      <List
-        subheader={<Box>
-          <Typography variant='h4'>Remove liquidity</Typography>
-          <Typography>Totals pairs: {pairTotal}</Typography>
-        </Box>
-        }
-      >
+      <List >
+        <ListItem>
+          <ListItemText primary={`Totals pairs: ${pairTotal}`} />
+        </ListItem>
         {list.map(({ name }) => <ListItem
           key={name}
           secondaryAction={<IconButton onClick={removeLiquidity}>
             <Delete />
           </IconButton>}
         >
-          <ListItemButton>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary={name} />
-            <ListItemText primary={`Share: ${share.toString()}`} />
-          </ListItemButton>
+          <ListItemText primary={name} />
+          <ListItemText primary={`Share: ${share.toString()}`} />
         </ListItem>
         )}
       </List>

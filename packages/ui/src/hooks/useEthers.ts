@@ -1,6 +1,5 @@
-import {ethers} from 'ethers'
-import { getProvider } from '../utils';
-import { getFactoryContract } from '../utils';
+import { ethers } from 'ethers';
+import { getFactoryContract, getProvider } from '../utils';
 
 async function useEthers() {
   const provider = getProvider();

@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { TOKEN_A, TOKEN_B } from '../utils/const';
 
-const PAIRS = ['DAI', 'DOGE']
+const PAIRS = [TOKEN_A, TOKEN_B]
 type PAIRS = typeof PAIRS[number]
 
 const usePairs = () => {

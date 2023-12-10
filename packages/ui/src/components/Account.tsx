@@ -1,5 +1,4 @@
 import { Avatar, Box, Tooltip } from '@mui/material';
-import { deepOrange } from '@mui/material/colors';
 import { useEffect, useState } from 'react';
 import { getSigner } from '../utils';
 
@@ -16,7 +15,7 @@ function Account() {
   }, [])
   return <Box>
     <Tooltip title={account}>
-      <Avatar sx={{ bgcolor: deepOrange[500] }}>{account.substring(0, 4)}</Avatar>
+      <Avatar sx={{ bgcolor: '#FFC436' }}>{account.substring(0, 4)}</Avatar>
     </Tooltip>
   </Box>
 }

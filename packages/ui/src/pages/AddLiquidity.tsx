@@ -1,7 +1,6 @@
-import { Card, Typography } from '@mui/material';
-import Button from '@mui/material/Button';
+import { Container } from '@mui/material';
 import { useState } from 'react';
-import TokenForm from '../components/TokenForm';
+import TokenPair from '../components/TokenPair';
 import {
   TOKEN, TOKENS,
   calculateMinTokenAmountForLiquidity, getPairAddress, getSigner,
@@ -59,16 +58,13 @@ function AddLiquidity() {
     console.log('AddLiquidity-14-result', result)
   }
 
-  const disabled = parseFloat(token0Value) * parseFloat(token1Value) === 0
-  return <div className='AddLiquidity'>
-    <Card sx={{ padding: '20px' }}>
-      <Typography variant='h4'>Add liquidity</Typography>
-      <TokenForm token={token0} onTokenChange={token0ChangeHandler} tokenValue={token0Value} onTokenValueChange={token0ValueChangeHandler} />
-      <TokenForm token={token1} onTokenChange={token1ChangeHandler} tokenValue={token1Value} onTokenValueChange={token1ValueChangeHandler} />
-      <Button variant='outlined' onClick={addLiquidity} disabled={disabled}>
-        {disabled ? 'Please input value' : 'Add'}
-      </Button>
-    </Card>
-  </div>
+  return <Container maxWidth='sm'>
+    <TokenPair {...{
+      token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
+      token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
+      submitHandler: addLiquidity,
+      submitButtonText: 'Add'
+    }} />
+  </Container >
 }
 export default AddLiquidity

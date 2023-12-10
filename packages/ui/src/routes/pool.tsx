@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs } from '@mui/material';
+import { Paper, Tab, Tabs } from '@mui/material';
 import { useState } from 'react';
 import TabPanel from '../components/TabPanel';
 import AddLiquidity from '../pages/AddLiquidity';
@@ -12,21 +12,20 @@ function Pool() {
     setCurrentTab(newValue);
   };
 
-  return <Box>
-    <Box>
-      <Tabs value={currentTab} onChange={handleChange}>
-        <Tab label="Add liquidity" />
-        <Tab label="Remove liquidity" />
-      </Tabs>
-      <TabPanel value={currentTab} index={0}>
-        <AddLiquidity />
-      </TabPanel>
-      <TabPanel value={currentTab} index={1}>
-        <RemoveLiquidity />
-      </TabPanel>
+  return <Paper>
+    <Tabs value={currentTab} onChange={handleChange}>
+      <Tab label="Add liquidity" />
+      <Tab label="Remove liquidity" />
+    </Tabs>
+    <TabPanel value={currentTab} index={0}>
+      <AddLiquidity />
       <Stats />
-    </Box>
-  </Box>
+    </TabPanel>
+    <TabPanel value={currentTab} index={1}>
+      <RemoveLiquidity />
+      <Stats />
+    </TabPanel>
+  </Paper>
 }
 
 export default Pool

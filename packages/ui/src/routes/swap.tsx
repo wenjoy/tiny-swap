@@ -1,6 +1,6 @@
-import { Box, Button, Card, Typography } from '@mui/material'
+import { Container, Paper } from '@mui/material'
 import { useState } from 'react'
-import TokenForm from '../components/TokenForm'
+import TokenPair from '../components/TokenPair'
 import Stats from '../pages/Stats'
 import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils'
 
@@ -68,18 +68,18 @@ function Swap() {
     }
   }
 
-  const disabled = parseFloat(token0Value) * parseFloat(token1Value) <= 0
-  return <Box>
-    <Card sx={{ padding: '20px' }}>
-      <Typography variant='h4'>Swap</Typography>
-      <TokenForm token={token0} onTokenChange={token0ChangeHandler} tokenValue={token0Value} onTokenValueChange={token0ValueChangeHandler} />
-      <TokenForm disabled token={token1} onTokenChange={token1ChangeHandler} tokenValue={token1Value} onTokenValueChange={token1ValueChangeHandler} />
-      <Button variant='outlined' onClick={swapHandler} disabled={disabled}>
-        {disabled ? 'Please input value' : 'Swap'}
-      </Button>
-    </Card>
+  return <Paper sx={{ p: 2, borderTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+    <Container maxWidth="xs">
+      <TokenPair {...{
+        token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
+        token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
+        submitHandler: swapHandler,
+        submitButtonText: 'Swap',
+        lock: true
+      }} />
+    </Container>
     <Stats />
-  </Box>
+  </Paper>
 }
 
 export default Swap
