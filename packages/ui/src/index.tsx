@@ -6,7 +6,7 @@ import { Container, CssBaseline } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import ErrorPage from './pages/error-page';
+import ErrorPage from './pages/ErrorPage';
 import reportWebVitals from './reportWebVitals';
 import Pool from './routes/pool';
 import Root from './routes/root';
