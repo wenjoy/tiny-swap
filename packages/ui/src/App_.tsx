@@ -1,10 +1,10 @@
 import { AppBar, Box, Container, Grid, Link, Toolbar, Typography } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import Account from './components/Account';
-import AddLiquidity from './components/AddLiquidity';
-import RemoveLiquidity from './components/RemoveLiquidity';
-import Stats from './components/Stats';
-import Swap from './components/Swap';
+import AddLiquidity from './pages/AddLiquidity';
+import RemoveLiquidity from './pages/RemoveLiquidity';
+import Stats from './pages/Stats';
+import Swap from './routes/swap';
 
 function App() {
   const routes = [
