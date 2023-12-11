@@ -1,5 +1,5 @@
 import { Container, Paper } from '@mui/material'
-import { useState } from 'react'
+import { useReducer, useState } from 'react'
 import TokenPair from '../components/TokenPair'
 import Stats from '../pages/Stats'
 import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils'
@@ -9,6 +9,7 @@ function Swap() {
   const [token1, setToken1] = useState<TOKEN>(TOKENS[1])
   const [token0Value, setToken0Value] = useState('')
   const [token1Value, setToken1Value] = useState('')
+  const [refresh, forceUpdate] = useReducer(x => x + 1, 0);
 
   function token0ChangeHandler(token: TOKEN) {
     setToken0(token);
@@ -59,7 +60,9 @@ function Swap() {
     }
     console.log('Swap-58', receipt)
     try {
-      await swap(token1, token1Value, to, pair)
+      const result = await swap(token1, token1Value, to, pair)
+      console.log('swap-63-result', result)
+      forceUpdate()
     } catch (err) {
       console.error("Switch error: ", err)
       //TODO: manually revert is not right
@@ -78,7 +81,7 @@ function Swap() {
         lock: true
       }} />
     </Container>
-    <Stats />
+    <Stats refresh={refresh} />
   </Paper>
 }
 

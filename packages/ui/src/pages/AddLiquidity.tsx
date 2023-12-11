@@ -8,12 +8,16 @@ import {
   tokenTransfer
 } from '../utils';
 
-function AddLiquidity() {
-
+function AddLiquidity({ onLiquidityAdded }: { onLiquidityAdded: () => void }) {
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0])
   const [token1, setToken1] = useState<TOKEN>(TOKENS[1])
   const [token0Value, setToken0Value] = useState('')
   const [token1Value, setToken1Value] = useState('')
+
+  function resetTokenValue() {
+    setToken0Value('')
+    setToken1Value('')
+  }
 
   function token0ChangeHandler(token: TOKEN) {
     setToken0(token);
@@ -55,7 +59,9 @@ function AddLiquidity() {
     await tokenTransfer(token1, token1Value, pairAddress)
 
     const result = await mint(pairAddress, signer)
-    console.log('AddLiquidity-14-result', result)
+    console.log('AddLiquidity14-result', result)
+    resetTokenValue()
+    onLiquidityAdded()
   }
 
   return <Container maxWidth='sm'>

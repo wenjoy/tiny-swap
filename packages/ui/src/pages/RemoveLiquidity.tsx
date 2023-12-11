@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { burn, getPairAddress, getPairLength, getPairShare, getSigner } from '../utils';
 import { TOKEN_A, TOKEN_B } from '../utils/const';
 
-function RemoveLiquidity() {
+function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => void }) {
   const [pairTotal, setPairTotal] = useState(0)
   const [share, setShare] = useState(0)
   const token0 = TOKEN_A
@@ -28,7 +28,9 @@ function RemoveLiquidity() {
   async function removeLiquidity() {
     const pairAddress = await getPairAddress(token0, token1);
     const signer = await getSigner()
-    await burn(pairAddress, signer)
+    const result = await burn(pairAddress, signer)
+    console.log('RemoveLiquidity-32-result', result)
+    onLiquidityRemoved()
   }
   return <Card sx={{ padding: '20px' }}>
     {pairTotal > 0 ?

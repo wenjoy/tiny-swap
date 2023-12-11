@@ -139,8 +139,8 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
 }
 export async function mint(pair: address, to: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
-  const result = await pairContract.mint(to)
-  console.log('utils-65-result', result)
+  const result = (await pairContract.mint(to)).wait()
+  return result
 }
 
 export async function burn(pair: address, to: address) {
@@ -152,16 +152,16 @@ export async function burn(pair: address, to: address) {
   const transferResult = await pairContract.transferFrom(signer, pair, liquidity)
   console.log('utils-96-transferResult', transferResult)
 
-  const result = await pairContract.burn(to)
-  console.log('utils-98-result', result)
+  const result = (await pairContract.burn(to)).wait()
+  return result
 }
 
 export async function swap(token: TOKEN, value: string, to: address, pair: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi)
   const tokenDecimal = await tokenDeciamls(token)
   const amountOut = ethers.parseUnits(value, tokenDecimal);
-  const result = await pairContract.swap(0, amountOut, to, '0x')
-  console.log('utils-112-result', result)
+  const result = (await pairContract.swap(0, amountOut, to, '0x')).wait()
+  return result
 }
 
 export async function getReserves(pair: address) {
