@@ -12,7 +12,7 @@ function Pool() {
     setCurrentTab(newValue);
   };
 
-  return <Paper>
+  return <Paper sx={{ p: 2, height: '90vh', borderTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
     <Tabs value={currentTab} onChange={handleChange}>
       <Tab label="Add liquidity" />
       <Tab label="Remove liquidity" />

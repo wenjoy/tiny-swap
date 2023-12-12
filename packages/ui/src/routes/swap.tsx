@@ -70,16 +70,17 @@ function Swap() {
     }
   }
 
-  return <Paper sx={{ p: 2, borderTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
-    <Container maxWidth="xs">
-      <TokenPair {...{
-        token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
-        token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
-        submitHandler: swapHandler,
-        submitButtonText: 'Swap',
-        lock: true,
-        refresh
-      }} />
+  return <Paper sx={{ p: 2, height: '90vh', borderTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
+    <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <TokenPair
+        {...{
+          token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
+          token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
+          submitHandler: swapHandler,
+          submitButtonText: 'Swap',
+          lock: true,
+          refresh
+        }} />
     </Container>
   </Paper>
 }

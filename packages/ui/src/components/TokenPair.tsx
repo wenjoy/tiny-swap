@@ -65,11 +65,10 @@ function TokenPair({
     </CardContent>
 
     <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Button variant='outlined' onClick={submitHandler} disabled={disabled}>
+      <Button sx={{ marginLeft: 'auto', marginRight: 'auto' }} variant='outlined' onClick={submitHandler} disabled={disabled}>
         {disabled ? 'Please input value' : submitButtonText}
       </Button>
       <ExpandMore
-        sx={{ justifySelf: 'end' }}
         expand={expanded}
         onClick={handleExpandClick}
         aria-expanded={expanded}
