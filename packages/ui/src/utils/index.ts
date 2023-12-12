@@ -79,13 +79,14 @@ export async function getPairLength() {
   console.log('pairsLength', pairsLength)
   return pairsLength
 }
-export async function getPairShare(pair: address) {
-  const pairContract = await getContractWithSigner(pair, pairABI.abi);
+
+export async function getLPTokenBalance(pair: address) {
+  const pairContract = await getContract(pair, pairABI.abi);
   const signer = await getSigner()
-  const total = await pairContract.totalSupply()
   const balance = await pairContract.balanceOf(signer)
-  // console.log('utils-68-total', total, balance, balance/total)
-  return total == 0 ? 0 : Number(balance) / Number(total)
+  const decimals = await pairContract.decimals()
+  const result = ethers.formatUnits(balance, decimals)
+  return result
 }
 // export async function createPair(token0Address: address, token1Address: address): Promise<address> {
 //   const contract = await getFactoryContractWithSigner()

@@ -1,12 +1,12 @@
 import { Delete } from '@mui/icons-material';
 import { Card, IconButton, List, ListItem, ListItemText } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { burn, getPairAddress, getPairLength, getPairShare, getSigner } from '../utils';
+import { burn, getLPTokenBalance, getPairAddress, getPairLength, getSigner } from '../utils';
 import { TOKEN_A, TOKEN_B } from '../utils/const';
 
 function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => void }) {
   const [pairTotal, setPairTotal] = useState(0)
-  const [share, setShare] = useState(0)
+  const [lpToken, setLpToken] = useState('')
   const token0 = TOKEN_A
   const token1 = TOKEN_B
 
@@ -19,8 +19,8 @@ function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => voi
       const pairAddress = await getPairAddress(token0, token1);
       const total = await getPairLength()
       setPairTotal(total.toString())
-      const share = await getPairShare(pairAddress)
-      setShare(share)
+      const balance = await getLPTokenBalance(pairAddress)
+      setLpToken(balance)
     }
     fetchPairLength().catch(err => console.error(err))
   }, [token0, token1])
@@ -38,6 +38,11 @@ function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => voi
         <ListItem>
           <ListItemText primary={`Totals pairs: ${pairTotal}`} />
         </ListItem>
+        <ListItem>
+          <ListItemText primary="Pair name" primaryTypographyProps={{ fontWeight: 700 }} />
+          <ListItemText primary="Balance" primaryTypographyProps={{ fontWeight: 700 }} />
+          <ListItemText primary="" sx={{ maxWidth: '80px' }} />
+        </ListItem>
         {list.map(({ name }) => <ListItem
           key={name}
           secondaryAction={<IconButton onClick={removeLiquidity}>
@@ -45,7 +50,7 @@ function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => voi
           </IconButton>}
         >
           <ListItemText primary={name} />
-          <ListItemText primary={`Share: ${share.toString()}`} />
+          <ListItemText primary={lpToken.toString()} />
         </ListItem>
         )}
       </List>
