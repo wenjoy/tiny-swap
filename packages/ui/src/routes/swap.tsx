@@ -1,7 +1,6 @@
 import { Container, Paper } from '@mui/material'
 import { useReducer, useState } from 'react'
 import TokenPair from '../components/TokenPair'
-import Stats from '../pages/Stats'
 import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils'
 
 function Swap() {
@@ -78,10 +77,10 @@ function Swap() {
         token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
         submitHandler: swapHandler,
         submitButtonText: 'Swap',
-        lock: true
+        lock: true,
+        refresh
       }} />
     </Container>
-    <Stats refresh={refresh} />
   </Paper>
 }
 

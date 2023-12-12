@@ -8,7 +8,7 @@ import {
   tokenTransfer
 } from '../utils';
 
-function AddLiquidity({ onLiquidityAdded }: { onLiquidityAdded: () => void }) {
+function AddLiquidity({ onLiquidityAdded, refresh }: { onLiquidityAdded: () => void, refresh: number }) {
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0])
   const [token1, setToken1] = useState<TOKEN>(TOKENS[1])
   const [token0Value, setToken0Value] = useState('')
@@ -69,7 +69,8 @@ function AddLiquidity({ onLiquidityAdded }: { onLiquidityAdded: () => void }) {
       token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
       token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
       submitHandler: addLiquidity,
-      submitButtonText: 'Add'
+      submitButtonText: 'Add',
+      refresh
     }} />
   </Container >
 }

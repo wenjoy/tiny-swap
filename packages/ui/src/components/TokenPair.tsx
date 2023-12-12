@@ -1,6 +1,14 @@
-import { Button, Card, CardActions, CardContent } from '@mui/material'
-import TokenForm from '../components/TokenForm'
-import { TOKEN } from '../utils'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Button, Card, CardActions, CardContent, Collapse, IconButton, IconButtonProps, styled } from '@mui/material';
+import { useState } from 'react';
+import TokenForm from '../components/TokenForm';
+import { TOKEN } from '../utils';
+import PairInfo from './PairInfo';
+
+
+interface ExpandMoreProps extends IconButtonProps {
+  expand: boolean;
+}
 
 function TokenPair({
   token0,
@@ -13,7 +21,8 @@ function TokenPair({
   token1ValueChangeHandler,
   submitHandler,
   submitButtonText,
-  lock
+  lock,
+  refresh
 }: {
   token0: TOKEN,
   token0Value: string,
@@ -25,11 +34,29 @@ function TokenPair({
   token1ValueChangeHandler: (value: string) => void,
   submitHandler: () => void,
   submitButtonText: string,
-  lock?: boolean
+  lock?: boolean,
+  refresh: number
 }) {
   const token0Number = parseFloat(token0Value)
   const token1Number = parseFloat(token1Value)
   const disabled = Number.isNaN(token0Number) || Number.isNaN(token0Number) || token0Number * token1Number <= 0
+
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  const ExpandMore = styled((props: ExpandMoreProps) => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+  })(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
+  }));
 
   return <Card sx={{ minWidth: 275, maxWidth: 475, pb: '20px' }}>
     <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -41,7 +68,21 @@ function TokenPair({
       <Button variant='outlined' onClick={submitHandler} disabled={disabled}>
         {disabled ? 'Please input value' : submitButtonText}
       </Button>
+      <ExpandMore
+        sx={{ justifySelf: 'end' }}
+        expand={expanded}
+        onClick={handleExpandClick}
+        aria-expanded={expanded}
+        aria-label="show more"
+      >
+        <ExpandMoreIcon />
+      </ExpandMore>
     </CardActions>
+    <Collapse in={expanded} timeout="auto" unmountOnExit>
+      <CardContent>
+        <PairInfo token0={token0} token1={token1} refresh={refresh} />
+      </CardContent>
+    </Collapse>
   </Card>
 }
 

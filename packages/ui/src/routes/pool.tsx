@@ -3,7 +3,6 @@ import { useReducer, useState } from 'react';
 import TabPanel from '../components/TabPanel';
 import AddLiquidity from '../pages/AddLiquidity';
 import RemoveLiquidity from '../pages/RemoveLiquidity';
-import Stats from '../pages/Stats';
 
 function Pool() {
   const [currentTab, setCurrentTab] = useState(0)
@@ -19,12 +18,10 @@ function Pool() {
       <Tab label="Remove liquidity" />
     </Tabs>
     <TabPanel value={currentTab} index={0}>
-      <AddLiquidity onLiquidityAdded={forceUpdate} />
-      <Stats refresh={refresh} />
+      <AddLiquidity onLiquidityAdded={forceUpdate} refresh={refresh} />
     </TabPanel>
     <TabPanel value={currentTab} index={1}>
       <RemoveLiquidity onLiquidityRemoved={forceUpdate} />
-      <Stats refresh={refresh} />
     </TabPanel>
   </Paper>
 }
