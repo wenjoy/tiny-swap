@@ -1,7 +1,8 @@
-import { Container, Paper } from '@mui/material'
-import { useReducer, useState } from 'react'
-import TokenPair from '../components/TokenPair'
-import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils'
+import { Container, Paper } from '@mui/material';
+import { useReducer, useState } from 'react';
+import { RefreshContext } from '..';
+import TokenPair from '../components/TokenPair';
+import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils';
 
 function Swap() {
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0])
@@ -9,6 +10,11 @@ function Swap() {
   const [token0Value, setToken0Value] = useState('')
   const [token1Value, setToken1Value] = useState('')
   const [refresh, forceUpdate] = useReducer(x => x + 1, 0);
+
+  function resetTokenValue() {
+    setToken0Value('')
+    setToken1Value('')
+  }
 
   function token0ChangeHandler(token: TOKEN) {
     setToken0(token);
@@ -58,6 +64,7 @@ function Swap() {
       await wait(200)
     }
     console.log('Swap-58', receipt)
+
     try {
       const result = await swap(token1, token1Value, to, pair)
       console.log('swap-63-result', result)
@@ -68,19 +75,22 @@ function Swap() {
       const resutl = await withDrawToken0(pair, token0, to, token0Value);
       console.log('Swap-65-resutl', resutl)
     }
+    resetTokenValue()
   }
 
   return <Paper sx={{ p: 2, height: '90vh', borderTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
     <Container maxWidth="xs" sx={{ mt: 8 }}>
-      <TokenPair
-        {...{
-          token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
-          token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
-          submitHandler: swapHandler,
-          submitButtonText: 'Swap',
-          lock: true,
-          refresh
-        }} />
+      <RefreshContext.Provider value={refresh}>
+        <TokenPair
+          {...{
+            token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
+            token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
+            submitHandler: swapHandler,
+            submitButtonText: 'Swap',
+            lock: true,
+            refresh
+          }} />
+      </RefreshContext.Provider>
     </Container>
   </Paper>
 }

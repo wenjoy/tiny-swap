@@ -1,5 +1,6 @@
 import { Container } from '@mui/material';
 import { useReducer, useState } from 'react';
+import { RefreshContext } from '..';
 import TokenPair from '../components/TokenPair';
 import {
   TOKEN, TOKENS,
@@ -66,13 +67,15 @@ function AddLiquidity() {
   }
 
   return <Container maxWidth='sm'>
-    <TokenPair {...{
-      token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
-      token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
-      submitHandler: addLiquidity,
-      submitButtonText: 'Add',
-      refresh
-    }} />
+    <RefreshContext.Provider value={refresh}>
+      <TokenPair {...{
+        token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
+        token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
+        submitHandler: addLiquidity,
+        submitButtonText: 'Add',
+        refresh
+      }} />
+    </RefreshContext.Provider>
   </Container >
 }
 export default AddLiquidity

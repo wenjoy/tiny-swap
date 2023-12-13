@@ -3,7 +3,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { Container, CssBaseline } from '@mui/material';
-import React from 'react';
+import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import AddLiquidity from './pages/AddLiquidity';
@@ -13,6 +13,8 @@ import reportWebVitals from './reportWebVitals';
 import Pool from './routes/pool';
 import Root from './routes/root';
 import Swap from './routes/swap';
+
+export const RefreshContext = createContext(null);
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
