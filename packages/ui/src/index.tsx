@@ -6,7 +6,9 @@ import { Container, CssBaseline } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import AddLiquidity from './pages/AddLiquidity';
 import ErrorPage from './pages/ErrorPage';
+import RemoveLiquidity from './pages/RemoveLiquidity';
 import reportWebVitals from './reportWebVitals';
 import Pool from './routes/pool';
 import Root from './routes/root';
@@ -20,7 +22,12 @@ const router = createBrowserRouter([
     path: "/", element: <Root />, errorElement: <ErrorPage />,
     children: [
       { path: "/swap", element: <Swap /> },
-      { path: "/pool", element: <Pool /> }
+      {
+        path: "/pool", element: <Pool />, children: [
+          { path: "/pool/add-liquidity", element: <AddLiquidity /> },
+          { path: "/pool/remove-liquidity", element: <RemoveLiquidity /> }
+        ]
+      }
     ]
   },
 ])

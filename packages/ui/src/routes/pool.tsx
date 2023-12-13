@@ -1,27 +1,22 @@
 import { Paper, Tab, Tabs } from '@mui/material';
-import { useReducer, useState } from 'react';
+import { Link, Outlet, useMatch } from 'react-router-dom';
 import TabPanel from '../components/TabPanel';
-import AddLiquidity from '../pages/AddLiquidity';
-import RemoveLiquidity from '../pages/RemoveLiquidity';
 
 function Pool() {
-  const [currentTab, setCurrentTab] = useState(0)
-  const [refresh, forceUpdate] = useReducer(x => x + 1, 0);
+  const match = useMatch("/pool/add-liquidity");
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setCurrentTab(newValue);
-  };
+  const currentTab = match ? 0 : 1;
 
   return <Paper sx={{ p: 2, height: '90vh', borderTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
-    <Tabs value={currentTab} onChange={handleChange}>
-      <Tab label="Add liquidity" />
-      <Tab label="Remove liquidity" />
+    <Tabs value={currentTab}>
+      <Tab label="Add liquidity" to="/pool/add-liquidity" component={Link} />
+      <Tab label="Remove liquidity" to="/pool/remove-liquidity" component={Link} />
     </Tabs>
     <TabPanel value={currentTab} index={0}>
-      <AddLiquidity onLiquidityAdded={forceUpdate} refresh={refresh} />
+      <Outlet />
     </TabPanel>
     <TabPanel value={currentTab} index={1}>
-      <RemoveLiquidity onLiquidityRemoved={forceUpdate} />
+      <Outlet />
     </TabPanel>
   </Paper>
 }

@@ -1,5 +1,5 @@
 import { Container } from '@mui/material';
-import { useState } from 'react';
+import { useReducer, useState } from 'react';
 import TokenPair from '../components/TokenPair';
 import {
   TOKEN, TOKENS,
@@ -8,11 +8,12 @@ import {
   tokenTransfer
 } from '../utils';
 
-function AddLiquidity({ onLiquidityAdded, refresh }: { onLiquidityAdded: () => void, refresh: number }) {
+function AddLiquidity() {
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0])
   const [token1, setToken1] = useState<TOKEN>(TOKENS[1])
   const [token0Value, setToken0Value] = useState('')
   const [token1Value, setToken1Value] = useState('')
+  const [refresh, forceUpdate] = useReducer(x => x + 1, 0);
 
   function resetTokenValue() {
     setToken0Value('')
@@ -61,7 +62,7 @@ function AddLiquidity({ onLiquidityAdded, refresh }: { onLiquidityAdded: () => v
     const result = await mint(pairAddress, signer)
     console.log('AddLiquidity14-result', result)
     resetTokenValue()
-    onLiquidityAdded()
+    forceUpdate()
   }
 
   return <Container maxWidth='sm'>

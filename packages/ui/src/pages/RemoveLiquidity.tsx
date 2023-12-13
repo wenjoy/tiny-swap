@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { burn, getLPTokenBalance, getPairAddress, getPairLength, getSigner } from '../utils';
 import { TOKEN_A, TOKEN_B } from '../utils/const';
 
-function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => void }) {
+function RemoveLiquidity() {
   const [pairTotal, setPairTotal] = useState(0)
   const [lpToken, setLpToken] = useState('')
   const token0 = TOKEN_A
@@ -30,7 +30,6 @@ function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => voi
     const signer = await getSigner()
     const result = await burn(pairAddress, signer)
     console.log('RemoveLiquidity-32-result', result)
-    onLiquidityRemoved()
   }
   return <Card sx={{ padding: '20px' }}>
     {pairTotal > 0 ?
