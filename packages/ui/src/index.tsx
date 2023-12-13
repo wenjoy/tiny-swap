@@ -5,7 +5,7 @@ import '@fontsource/roboto/700.css';
 import { Container, CssBaseline } from '@mui/material';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import AddLiquidity from './pages/AddLiquidity';
 import ErrorPage from './pages/ErrorPage';
 import RemoveLiquidity from './pages/RemoveLiquidity';
@@ -21,9 +21,11 @@ const router = createBrowserRouter([
   {
     path: "/", element: <Root />, errorElement: <ErrorPage />,
     children: [
+      { index: true, element: <Navigate to='/swap' /> },
       { path: "/swap", element: <Swap /> },
       {
         path: "/pool", element: <Pool />, children: [
+          { index: true, element: <Navigate to='/pool/add-liquidity' /> },
           { path: "/pool/add-liquidity", element: <AddLiquidity /> },
           { path: "/pool/remove-liquidity", element: <RemoveLiquidity /> }
         ]
