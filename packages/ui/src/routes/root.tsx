@@ -1,4 +1,5 @@
 import { AppBar, Box, Toolbar, Typography } from '@mui/material';
+import { useEffect } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import Account from '../components/Account';
 
@@ -7,6 +8,13 @@ function Root() {
     { href: '/swap', name: 'Swap' },
     { href: '/pool', name: 'Pool' },
   ]
+
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on('accountsChanged', () => window.location.reload())
+      window.ethereum.on('chainChanged', () => window.location.reload())
+    }
+  }, [])
 
   return (
     <>
