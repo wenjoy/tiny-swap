@@ -36,10 +36,10 @@ function RemoveLiquidity({ onLiquidityRemoved }: { onLiquidityRemoved: () => voi
     {pairTotal > 0 ?
       <List >
         <ListItem>
-          <ListItemText primary={`Totals pairs: ${pairTotal}`} />
+          <ListItemText primary={`Total pairs: ${pairTotal}`} />
         </ListItem>
         <ListItem>
-          <ListItemText primary="Pair name" primaryTypographyProps={{ fontWeight: 700 }} />
+          <ListItemText primary="LP token" primaryTypographyProps={{ fontWeight: 700 }} />
           <ListItemText primary="Balance" primaryTypographyProps={{ fontWeight: 700 }} />
           <ListItemText primary="" sx={{ maxWidth: '80px' }} />
         </ListItem>
