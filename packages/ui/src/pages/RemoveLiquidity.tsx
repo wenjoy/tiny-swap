@@ -1,12 +1,13 @@
 import { Delete } from '@mui/icons-material';
 import { Card, IconButton, List, ListItem, ListItemText } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { burn, getLPTokenBalance, getPairAddress, getPairLength, getSigner } from '../utils';
 import { TOKEN_A, TOKEN_B } from '../utils/const';
 
 function RemoveLiquidity() {
   const [pairTotal, setPairTotal] = useState(0)
   const [lpToken, setLpToken] = useState('')
+  const [refresh, forceUpdate] = useReducer(x => x + 1, 0)
   const token0 = TOKEN_A
   const token1 = TOKEN_B
 
@@ -23,13 +24,14 @@ function RemoveLiquidity() {
       setLpToken(balance)
     }
     fetchPairLength().catch(err => console.error(err))
-  }, [token0, token1])
+  }, [token0, token1, refresh])
 
   async function removeLiquidity() {
     const pairAddress = await getPairAddress(token0, token1);
     const signer = await getSigner()
     const result = await burn(pairAddress, signer)
     console.log('RemoveLiquidity-32-result', result)
+    forceUpdate()
   }
   return <Card sx={{ padding: '20px' }}>
     {pairTotal > 0 ?
