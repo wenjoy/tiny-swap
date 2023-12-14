@@ -1,7 +1,8 @@
-import { AppBar, Box, Toolbar, Typography } from '@mui/material';
-import { useEffect } from 'react';
+import { Alert, AlertTitle, AppBar, Box, Toolbar, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import Account from '../components/Account';
+import { CHAIN_ID_SEPOLIA } from '../utils/const';
 
 function Root() {
   const routes = [
@@ -9,10 +10,16 @@ function Root() {
     { href: '/pool', name: 'Pool' },
   ]
 
+  const [networkError, setNetworkError] = useState(false)
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', () => window.location.reload())
       window.ethereum.on('chainChanged', () => window.location.reload())
+      window.ethereum.request({ method: 'eth_chainId' }).then((chainId: string) => {
+        if (chainId !== CHAIN_ID_SEPOLIA) {
+          setNetworkError(true)
+        }
+      })
     }
   }, [])
 
@@ -37,7 +44,10 @@ function Root() {
           <Account />
         </Toolbar>
       </AppBar>
-
+      {networkError && <Alert severity='error'>
+        <AlertTitle>Error</AlertTitle>
+        This app only works on <strong>Sepolia</strong>, please change your network in <strong>Metamask</strong>
+      </Alert>}
       <Box>
         <Outlet />
       </Box>

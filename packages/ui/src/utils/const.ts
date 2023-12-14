@@ -14,3 +14,4 @@ TOKENS.forEach((token, index) => {
   tokenMap.set(token, TOKEN_ADDRESSES[index]);
 });
 
+export const CHAIN_ID_SEPOLIA = '0xaa36a7'
