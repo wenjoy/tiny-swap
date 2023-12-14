@@ -2,7 +2,7 @@ import { Container, Paper } from '@mui/material';
 import { useReducer, useState } from 'react';
 import { RefreshContext } from '..';
 import TokenPair from '../components/TokenPair';
-import { getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils';
+import { getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenTransfer, wait, withDrawToken0 } from '../utils';
 import { TOKEN, TOKENS } from '../utils/const';
 
 function Swap() {
@@ -35,7 +35,6 @@ function Swap() {
 
   async function token0ValueChangeHandler(value: string) {
     const otherValue = await getTokenAmount(token0, token1, value)
-    console.log('Swap-30-otherValue', otherValue)
     setTokensValue(setToken0Value, setToken1Value, value, otherValue)
   }
   async function token1ValueChangeHandler(value: string) {
@@ -53,10 +52,7 @@ function Swap() {
   async function swapHandler() {
     const pair = await getPairAddress(token0, token1)
     const to = await getSigner()
-    console.log('Swap-48-en0', token0, token0Value)
-    console.log('Token balance', await tokenBalance(tokenToAddress(token0)), await tokenBalance(tokenToAddress(token1)))
     const result = await tokenTransfer(token0, token0Value, pair)
-    console.log('Swap-49-result', result)
     const provider = await getProvider()
 
     let receipt
@@ -64,17 +60,14 @@ function Swap() {
       receipt = await provider.getTransactionReceipt(result.hash)
       await wait(200)
     }
-    console.log('Swap-58', receipt)
 
     try {
       const result = await swap(token1, token1Value, to, pair)
-      console.log('swap-63-result', result)
       forceUpdate()
     } catch (err) {
       console.error("Switch error: ", err)
       //TODO: manually revert is not right
       const resutl = await withDrawToken0(pair, token0, to, token0Value);
-      console.log('Swap-65-resutl', resutl)
     }
     resetTokenValue()
   }

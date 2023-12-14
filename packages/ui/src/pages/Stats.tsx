@@ -19,7 +19,6 @@ function Stats({ refresh }: { refresh?: number }) {
     async function fetchAddress() {
       const pair = await getPairAddress(token0, token1)
       const reserves = await getReserves(pair);
-      console.log('Stats-15-reserves', reserves)
       setAccounts([pair, account1, account2])
       setContracts([tokenToAddress(token0), tokenToAddress(token1), pair])
       setReserves(reserves)

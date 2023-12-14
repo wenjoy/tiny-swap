@@ -65,7 +65,6 @@ export async function getPairAddress(token0: TOKEN, token1: TOKEN): Promise<stri
   const factory = getFactoryContract()
   try {
     const pair = await factory.getPair(token0Address, token1Address)
-    console.log('utils-68-pair', pair)
     return pair
   } catch (err) {
     console.error(err)
@@ -76,7 +75,6 @@ export async function getPairAddress(token0: TOKEN, token1: TOKEN): Promise<stri
 export async function getPairLength() {
   const contract = getFactoryContract();
   const pairsLength = await contract.allParisLength();
-  console.log('pairsLength', pairsLength)
   return pairsLength
 }
 
@@ -151,7 +149,6 @@ export async function burn(pair: address, to: address) {
   await pairContract.approve(signer, 100000000000000)
 
   const transferResult = await pairContract.transferFrom(signer, pair, liquidity)
-  console.log('utils-96-transferResult', transferResult)
 
   const result = (await pairContract.burn(to)).wait()
   return result
@@ -208,7 +205,6 @@ export async function tokenTransferFrom(token: TOKEN, value: string, from: addre
   const tokenAddes = tokenToAddress(token)
   const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
   const result = await tokenCotract.transferFrom(from, to, amount)
-  console.log('utils-195-result', result)
 }
 
 export function tokenToAddress(token: TOKEN): string {

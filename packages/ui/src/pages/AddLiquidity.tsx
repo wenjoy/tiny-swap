@@ -61,7 +61,6 @@ function AddLiquidity() {
     await tokenTransfer(token1, token1Value, pairAddress)
 
     const result = await mint(pairAddress, signer)
-    console.log('AddLiquidity14-result', result)
     resetTokenValue()
     forceUpdate()
   }

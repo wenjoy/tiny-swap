@@ -14,4 +14,3 @@ TOKENS.forEach((token, index) => {
   tokenMap.set(token, TOKEN_ADDRESSES[index]);
 });
 
-console.log('const-17', TOKEN_ADDRESSES, FACTORY_ADDRESS)

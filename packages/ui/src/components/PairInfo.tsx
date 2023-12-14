@@ -17,7 +17,6 @@ function PairInfo({ token0, token1, refresh }: { token0: TOKEN, token1: TOKEN, r
     async function fetchAddress() {
       const pair = await getPairAddress(token0, token1)
       const reserves = await getReserves(pair);
-      console.log('Stats-15-reserves', reserves)
       setReserves(reserves)
     }
     fetchAddress().catch(err => console.error(err))

@@ -30,7 +30,6 @@ function RemoveLiquidity() {
     const pairAddress = await getPairAddress(token0, token1);
     const signer = await getSigner()
     const result = await burn(pairAddress, signer)
-    console.log('RemoveLiquidity-32-result', result)
     forceUpdate()
   }
   return <Card sx={{ padding: '20px' }}>
