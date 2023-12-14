@@ -86,19 +86,6 @@ export async function getLPTokenBalance(pair: address) {
   const result = ethers.formatUnits(balance, decimals)
   return result
 }
-// export async function createPair(token0Address: address, token1Address: address): Promise<address> {
-//   const contract = await getFactoryContractWithSigner()
-//
-//   let pair = await getPairAddress(token0Address, token1Address)
-//
-//   if (ethers.ZeroAddress == pair) {
-//     const result = await contract.createPair(token0Address, token1Address)
-//     console.log('result', result)
-//   }
-//
-//   pair = await getPairAddress(token0Address, token1Address)
-//   return pair
-// }
 
 async function isFirstDeposit(pair: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
