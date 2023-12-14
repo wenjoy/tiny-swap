@@ -2,7 +2,8 @@ import { Container, Paper } from '@mui/material';
 import { useReducer, useState } from 'react';
 import { RefreshContext } from '..';
 import TokenPair from '../components/TokenPair';
-import { TOKEN, TOKENS, getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils';
+import { getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenBalance, tokenToAddress, tokenTransfer, wait, withDrawToken0 } from '../utils';
+import { TOKEN, TOKENS } from '../utils/const';
 
 function Swap() {
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0])

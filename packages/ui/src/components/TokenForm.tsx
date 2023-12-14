@@ -1,5 +1,6 @@
 import { Box, MenuItem, Select, TextField } from '@mui/material';
-import { TOKEN, TOKENS, tokenToAddress } from '../utils';
+import { tokenToAddress } from '../utils';
+import { TOKEN, TOKENS } from '../utils/const';
 import Balance from './Balance';
 
 function TokenForm(

@@ -7,7 +7,6 @@ function Account() {
   useEffect(() => {
     async function fetchAccount() {
       const account = await getSigner()
-      console.log('Account-10-account', account)
       setAccount(account.address)
     }
 

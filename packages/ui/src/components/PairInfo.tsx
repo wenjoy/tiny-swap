@@ -1,6 +1,7 @@
 import { Box, Divider, Paper, Stack, Typography, styled } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { TOKEN, getPairAddress, getReserves } from '../utils';
+import { getPairAddress, getReserves } from '../utils';
+import { TOKEN } from '../utils/const';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',

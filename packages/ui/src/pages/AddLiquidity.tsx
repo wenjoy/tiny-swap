@@ -3,11 +3,11 @@ import { useReducer, useState } from 'react';
 import { RefreshContext } from '..';
 import TokenPair from '../components/TokenPair';
 import {
-  TOKEN, TOKENS,
   calculateMinTokenAmountForLiquidity, getPairAddress, getSigner,
   mint,
   tokenTransfer
 } from '../utils';
+import { TOKEN, TOKENS } from '../utils/const';
 
 function AddLiquidity() {
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0])

@@ -2,7 +2,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Button, Card, CardActions, CardContent, Collapse, IconButton, IconButtonProps, styled } from '@mui/material';
 import { useState } from 'react';
 import TokenForm from '../components/TokenForm';
-import { TOKEN } from '../utils';
+import { TOKEN } from '../utils/const';
 import PairInfo from './PairInfo';
 
 

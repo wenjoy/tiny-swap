@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import erc20ABI from "../artifactory/abi/ERC20.json";
 import factoryABI from "../artifactory/abi/UniswapV2Factory.json";
 import pairABI from "../artifactory/abi/UniswapV2Pair.json";
-import { TOKEN_A, TOKEN_B } from './const';
+import { FACTORY_ADDRESS, TOKEN, tokenMap } from './const';
 
 declare global {
   interface Window {
@@ -45,14 +45,14 @@ export async function getSigner() {
 }
 
 export function getFactoryContract() {
-  const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  const contractAddress = FACTORY_ADDRESS;
   const contractABI = factoryABI.abi;
   return getContract(contractAddress, contractABI);
 }
 
 export async function getFactoryContractWithSigner() {
   const signer = await getSigner();
-  const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+  const contractAddress = FACTORY_ADDRESS;
   const contractABI = factoryABI.abi;
   const contract = getContract(contractAddress, contractABI);
   const contractWithSigner = await contract.connect(signer) as ethers.Contract
@@ -210,19 +210,6 @@ export async function tokenTransferFrom(token: TOKEN, value: string, from: addre
   const result = await tokenCotract.transferFrom(from, to, amount)
   console.log('utils-195-result', result)
 }
-
-/**
- * why not just TOKENS = {DAI: '0x11', DOGE: '0x22'}, will this better?
- */
-export const TOKENS = [TOKEN_A, TOKEN_B] as const
-export type TOKEN = (typeof TOKENS)[number]
-
-const TOKENADDRESS = ['0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512', '0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9']
-
-const tokenMap = new Map<TOKEN, string>()
-TOKENS.forEach((token, index) => {
-  tokenMap.set(token, TOKENADDRESS[index]);
-})
 
 export function tokenToAddress(token: TOKEN): string {
   const ret = tokenMap.get(token)
