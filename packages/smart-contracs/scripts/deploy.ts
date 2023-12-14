@@ -1,47 +1,51 @@
 import { ethers } from "hardhat";
+import { ERC20, UniswapV2Factory } from '../typechain-types';
 
 function uintTransform(value: number) {
   return ethers.parseUnits(value.toString(), 18)
 }
 
+async function getContract<T>(name: string, args: any[], address?: string): Promise<[T, string]> {
+  const [deployer] = await ethers.getSigners();
+
+  if (address) {
+    return [(await ethers.getContractAt(name, address)) as T, address]
+  }
+
+  const contract = await ethers.deployContract(name, args, deployer);
+  const contractAddress = await contract.getAddress()
+  console.log("contract deployed at: %s, by %s", contractAddress, deployer);
+  return [contract as T, contractAddress]
+}
+
 async function main() {
-  const [deployer, other]= await ethers.getSigners();
-  console.log("Deploying contracts with the account:", deployer.address);
+  const [deployer] = await ethers.getSigners();
 
-  const factory = await ethers.deployContract("UniswapV2Factory", [deployer]);
-  console.log("factory address: ", await factory.getAddress());
+  const [factory] = await getContract<UniswapV2Factory>("UniswapV2Factory", [deployer], '0x6255a84B94422a8d8B492542Bd03703d7a7ac34a')
+  const [token0, token0Address] = await getContract<ERC20>('ERC20', [], '0x03f6a4b75E3cA56c87873Fc0CFA58577FF26E9bb')
+  const [token1, token1Address] = await getContract<ERC20>('ERC20', [], '0xCCc18761954De1472c2F68787Dad13C5D066e7Ff')
 
-  const total = uintTransform(300)
-  const token0 = await ethers.deployContract('ERC20')
-  console.log("token0 address: ", await token0.getAddress());
-  await token0.mint(total)
+  let pairAddress = await factory.getPair(token0Address, token1Address);
+
+  if (pairAddress !== ethers.ZeroAddress) {
+    console.log('deploy-31', 'pair already exists', pairAddress)
+    return
+  }
+
+  const initial_supply = uintTransform(300)
+  await token0.mint(initial_supply)
+  await token1.mint(initial_supply)
   console.log('token0 balance', await token0.balanceOf(deployer))
-
-
-  const token1 = await ethers.deployContract('ERC20')
-  console.log("token1 address: ", await token1.getAddress());
-  await token1.mint(total)
   console.log('token1 balance', await token1.balanceOf(deployer))
 
-  const out = uintTransform(100)
-  console.log('other account', other.address)
-  await token0.transfer(other, out)
-  console.log('token0 balance', await token0.balanceOf(other))
-  await token1.transfer(other, out)
-  console.log('token1 balance', await token1.balanceOf(other))
-  
-  const token0Address = await token0.getAddress()
-  const token1Address = await token1.getAddress()
   await factory.createPair(token0Address, token1Address)
-
-  const pairAddress = await factory.getPair(token0Address, token1Address);
-  const result = await token0.approve(other, uintTransform(1000))
+  pairAddress = await factory.getPair(token0Address, token1Address);
   console.log('deploy-38-result', pairAddress)
 }
 
 main()
-.then(() => process.exitCode = 0)
-.catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  .then(() => process.exitCode = 0)
+  .catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
