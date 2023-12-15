@@ -5,7 +5,9 @@ import '@fontsource/roboto/700.css';
 import { Container, CssBaseline } from '@mui/material';
 import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary';
 import AddLiquidity from './pages/AddLiquidity';
 import ErrorPage from './pages/ErrorPage';
 import RemoveLiquidity from './pages/RemoveLiquidity';
@@ -15,6 +17,15 @@ import Root from './routes/root';
 import Swap from './routes/swap';
 
 export const RefreshContext = createContext(null);
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // default: true
+      cacheTime: 0,
+      retry: 0,
+    },
+  },
+})
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -37,10 +48,14 @@ const router = createBrowserRouter([
 ])
 root.render(
   <React.StrictMode>
-    <CssBaseline />
-    <Container maxWidth="md">
-      <RouterProvider router={router} />
-    </Container>
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary>
+        <CssBaseline />
+        <Container maxWidth="md">
+          <RouterProvider router={router} />
+        </Container>
+      </ErrorBoundary>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

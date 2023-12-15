@@ -1,5 +1,5 @@
-import { Box, Divider, Paper, Stack, Typography, styled } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Box, Divider, Paper, Skeleton, Stack, Typography, styled } from '@mui/material';
+import { useQuery } from 'react-query';
 import { getPairAddress, getReserves } from '../utils';
 import { TOKEN } from '../utils/const';
 
@@ -11,16 +11,21 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+async function fetchAddress(token0: TOKEN, token1: TOKEN) {
+  const pair = await getPairAddress(token0, token1)
+  return await getReserves(pair);
+}
+
 function PairInfo({ token0, token1, refresh }: { token0: TOKEN, token1: TOKEN, refresh: number }) {
-  const [reserves, setReserves] = useState<BigInt[]>([])
-  useEffect(() => {
-    async function fetchAddress() {
-      const pair = await getPairAddress(token0, token1)
-      const reserves = await getReserves(pair);
-      setReserves(reserves)
-    }
-    fetchAddress().catch(err => console.error(err))
-  }, [refresh])
+  const { isLoading, error, data: reserves = [] } = useQuery({
+    queryKey: ['reserves'],
+    queryFn: () => fetchAddress(token0, token1)
+  })
+
+  if (error) {
+    return null
+  }
+
   return <Box>
     <Divider sx={{ mb: 4 }} />
     <Stack direction="row" spacing={8} justifyContent="center"
@@ -28,11 +33,17 @@ function PairInfo({ token0, token1, refresh }: { token0: TOKEN, token1: TOKEN, r
     >
       <Item>
         <Typography fontWeight={700}>Reserver0</Typography>
-        <Typography>{reserves[0]?.toString()}</Typography>
+        {isLoading ?
+          <Skeleton variant='text' /> :
+          <Typography>{reserves[0]?.toString()}</Typography>
+        }
       </Item>
       <Item>
         <Typography fontWeight={700}>Reserver1</Typography>
-        <Typography>{reserves[1]?.toString()}</Typography>
+        {isLoading ?
+          <Skeleton variant='text' /> :
+          <Typography>{reserves[1]?.toString()}</Typography>
+        }
       </Item>
     </Stack>
   </Box>
