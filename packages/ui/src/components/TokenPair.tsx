@@ -1,10 +1,18 @@
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Button, Card, CardActions, CardContent, Collapse, IconButton, IconButtonProps, styled } from '@mui/material';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Collapse,
+  IconButton,
+  IconButtonProps,
+  styled,
+} from '@mui/material';
 import { useState } from 'react';
 import TokenForm from '../components/TokenForm';
 import { TOKEN } from '../utils/const';
 import PairInfo from './PairInfo';
-
 
 interface ExpandMoreProps extends IconButtonProps {
   expand: boolean;
@@ -22,24 +30,31 @@ function TokenPair({
   submitHandler,
   submitButtonText,
   lock,
-  refresh
+  refresh,
+  token0ValueLoading,
+  token1ValueLoading,
 }: {
-  token0: TOKEN,
-  token0Value: string,
-  token0ChangeHandler: (token: TOKEN) => void,
-  token0ValueChangeHandler: (value: string) => void,
-  token1: TOKEN,
-  token1Value: string,
-  token1ChangeHandler: (token: TOKEN) => void,
-  token1ValueChangeHandler: (value: string) => void,
-  submitHandler: () => void,
-  submitButtonText: string,
-  lock?: boolean,
-  refresh: number
+  token0: TOKEN;
+  token0Value: string;
+  token0ChangeHandler: (token: TOKEN) => void;
+  token0ValueChangeHandler: (value: string) => void;
+  token1: TOKEN;
+  token1Value: string;
+  token1ChangeHandler: (token: TOKEN) => void;
+  token1ValueChangeHandler: (value: string) => void;
+  submitHandler: () => void;
+  submitButtonText: string;
+  lock?: boolean;
+  refresh: number;
+  token0ValueLoading: boolean;
+  token1ValueLoading: boolean;
 }) {
-  const token0Number = parseFloat(token0Value)
-  const token1Number = parseFloat(token1Value)
-  const disabled = Number.isNaN(token0Number) || Number.isNaN(token0Number) || token0Number * token1Number <= 0
+  const token0Number = parseFloat(token0Value);
+  const token1Number = parseFloat(token1Value);
+  const disabled =
+    Number.isNaN(token0Number) ||
+    Number.isNaN(token0Number) ||
+    token0Number * token1Number <= 0;
 
   const [expanded, setExpanded] = useState(false);
 
@@ -58,31 +73,57 @@ function TokenPair({
     }),
   }));
 
-  return <Card sx={{ minWidth: 275, maxWidth: 475, pb: '20px' }}>
-    <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <TokenForm token={token0} onTokenChange={token0ChangeHandler} tokenValue={token0Value} onTokenValueChange={token0ValueChangeHandler} />
-      <TokenForm disabled={lock} token={token1} onTokenChange={token1ChangeHandler} tokenValue={token1Value} onTokenValueChange={token1ValueChangeHandler} />
-    </CardContent>
-
-    <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Button sx={{ marginLeft: 'auto', marginRight: 'auto' }} variant='outlined' onClick={submitHandler} disabled={disabled}>
-        {disabled ? 'Please input value' : submitButtonText}
-      </Button>
-      <ExpandMore
-        expand={expanded}
-        onClick={handleExpandClick}
-        aria-expanded={expanded}
-        aria-label="show more"
+  return (
+    <Card sx={{ minWidth: 275, maxWidth: 475, pb: '20px' }}>
+      <CardContent
+        sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >
-        <ExpandMoreIcon />
-      </ExpandMore>
-    </CardActions>
-    <Collapse in={expanded} timeout="auto" unmountOnExit>
-      <CardContent>
-        <PairInfo token0={token0} token1={token1} refresh={refresh} />
+        <TokenForm
+          token={token0}
+          onTokenChange={token0ChangeHandler}
+          tokenValue={token0Value}
+          onTokenValueChange={token0ValueChangeHandler}
+          loading={token0ValueLoading}
+        />
+        <TokenForm
+          disabled={lock}
+          token={token1}
+          onTokenChange={token1ChangeHandler}
+          tokenValue={token1Value}
+          onTokenValueChange={token1ValueChangeHandler}
+          loading={token1ValueLoading}
+        />
       </CardContent>
-    </Collapse>
-  </Card>
+
+      <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Button
+          sx={{ marginLeft: 'auto', marginRight: 'auto' }}
+          variant="outlined"
+          onClick={submitHandler}
+          disabled={disabled || token0ValueLoading || token1ValueLoading}
+        >
+          {disabled
+            ? 'Please input amount'
+            : token0ValueLoading || token1ValueLoading
+            ? 'Cauculating amount'
+            : submitButtonText}
+        </Button>
+        <ExpandMore
+          expand={expanded}
+          onClick={handleExpandClick}
+          aria-expanded={expanded}
+          aria-label="show more"
+        >
+          <ExpandMoreIcon />
+        </ExpandMore>
+      </CardActions>
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent>
+          <PairInfo token0={token0} token1={token1} refresh={refresh} />
+        </CardContent>
+      </Collapse>
+    </Card>
+  );
 }
 
-export default TokenPair
+export default TokenPair;

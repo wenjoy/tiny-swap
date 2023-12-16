@@ -2,19 +2,30 @@ import { Container, Paper } from '@mui/material';
 import { useReducer, useState } from 'react';
 import { RefreshContext } from '..';
 import TokenPair from '../components/TokenPair';
-import { getPairAddress, getProvider, getSigner, getTokenAmount, swap, tokenTransfer, wait, withDrawToken0 } from '../utils';
+import {
+  getPairAddress,
+  getProvider,
+  getSigner,
+  getTokenAmount,
+  swap,
+  tokenTransfer,
+  wait,
+  withDrawToken0,
+} from '../utils';
 import { TOKEN, TOKENS } from '../utils/const';
 
 function Swap() {
-  const [token0, setToken0] = useState<TOKEN>(TOKENS[0])
-  const [token1, setToken1] = useState<TOKEN>(TOKENS[1])
-  const [token0Value, setToken0Value] = useState('')
-  const [token1Value, setToken1Value] = useState('')
-  const [refresh, forceUpdate] = useReducer(x => x + 1, 0);
+  const [token0, setToken0] = useState<TOKEN>(TOKENS[0]);
+  const [token1, setToken1] = useState<TOKEN>(TOKENS[1]);
+  const [token0Value, setToken0Value] = useState('');
+  const [token1Value, setToken1Value] = useState('');
+  const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
+  const [token0ValueLoading, setToken0ValueLoading] = useState(false);
+  const [token1ValueLoading, setToken1ValueLoading] = useState(false);
 
   function resetTokenValue() {
-    setToken0Value('')
-    setToken1Value('')
+    setToken0Value('');
+    setToken1Value('');
   }
 
   function token0ChangeHandler(token: TOKEN) {
@@ -22,71 +33,98 @@ function Swap() {
 
     //TODO: token change should recalculate value also
     if (token === token1) {
-      setToken1(token0)
+      setToken1(token0);
     }
   }
   function token1ChangeHandler(token: TOKEN) {
     setToken1(token);
 
     if (token === token0) {
-      setToken0(token1)
+      setToken0(token1);
     }
   }
 
   async function token0ValueChangeHandler(value: string) {
-    const otherValue = await getTokenAmount(token0, token1, value)
-    setTokensValue(setToken0Value, setToken1Value, value, otherValue)
+    setToken0Value(value);
+    setToken1ValueLoading(true);
+    const otherValue = await getTokenAmount(token0, token1, value);
+    setTokensValue(setToken1Value, otherValue);
+    setToken1ValueLoading(false);
   }
   async function token1ValueChangeHandler(value: string) {
-    const otherValue = await getTokenAmount(token1, token0, value)
-    setTokensValue(setToken1Value, setToken0Value, value, otherValue)
+    setToken1Value(value);
+    setToken0ValueLoading(true);
+    const otherValue = await getTokenAmount(token1, token0, value);
+    setTokensValue(setToken0Value, otherValue);
+    setToken0ValueLoading(false);
   }
 
-  async function setTokensValue(setFn: (value: React.SetStateAction<string>) => void, setOtherFn: (value: React.SetStateAction<string>) => void, value: string, otherValue: string) {
-    setFn(value);
+  async function setTokensValue(
+    setOtherFn: (value: React.SetStateAction<string>) => void,
+    otherValue: string
+  ) {
     if (otherValue) {
-      setOtherFn(otherValue)
+      setOtherFn(otherValue);
     }
   }
 
   async function swapHandler() {
-    const pair = await getPairAddress(token0, token1)
-    const to = await getSigner()
-    const result = await tokenTransfer(token0, token0Value, pair)
-    const provider = await getProvider()
+    const pair = await getPairAddress(token0, token1);
+    const to = await getSigner();
+    const result = await tokenTransfer(token0, token0Value, pair);
+    const provider = await getProvider();
 
-    let receipt
+    let receipt;
     while (!receipt) {
-      receipt = await provider.getTransactionReceipt(result.hash)
-      await wait(200)
+      receipt = await provider.getTransactionReceipt(result.hash);
+      await wait(200);
     }
 
     try {
-      const result = await swap(token1, token1Value, to, pair)
-      forceUpdate()
+      const result = await swap(token1, token1Value, to, pair);
+      forceUpdate();
     } catch (err) {
-      console.error("Switch error: ", err)
+      console.error('Switch error: ', err);
       //TODO: manually revert is not right
       const resutl = await withDrawToken0(pair, token0, to, token0Value);
     }
-    resetTokenValue()
+    resetTokenValue();
   }
 
-  return <Paper sx={{ p: 2, height: '90vh', borderTop: 0, borderTopLeftRadius: 0, borderTopRightRadius: 0 }}>
-    <Container maxWidth="xs" sx={{ mt: 8 }}>
-      <RefreshContext.Provider value={refresh}>
-        <TokenPair
-          {...{
-            token0, token0Value, token0ChangeHandler, token0ValueChangeHandler,
-            token1, token1Value, token1ChangeHandler, token1ValueChangeHandler,
-            submitHandler: swapHandler,
-            submitButtonText: 'Swap',
-            lock: true,
-            refresh
-          }} />
-      </RefreshContext.Provider>
-    </Container>
-  </Paper>
+  return (
+    <Paper
+      sx={{
+        p: 2,
+        height: '90vh',
+        borderTop: 0,
+        borderTopLeftRadius: 0,
+        borderTopRightRadius: 0,
+      }}
+    >
+      <Container maxWidth="xs" sx={{ mt: 8 }}>
+        <RefreshContext.Provider value={refresh}>
+          <TokenPair
+            {...{
+              token0,
+              token0Value,
+              token0ChangeHandler,
+              token0ValueChangeHandler,
+              token1,
+              token1Value,
+              token1ChangeHandler,
+              token1ValueChangeHandler,
+              submitHandler: swapHandler,
+              submitButtonText: 'Swap',
+              lock: true,
+              refresh,
+              token0ValueLoading,
+              token1ValueLoading,
+            }}
+          />
+        </RefreshContext.Provider>
+      </Container>
+    </Paper>
+  );
 }
 
-export default Swap
+export default Swap;

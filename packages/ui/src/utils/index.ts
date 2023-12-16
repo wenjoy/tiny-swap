@@ -93,6 +93,7 @@ async function isFirstDeposit(pair: address) {
   return totalSupply === BigInt(0);
 }
 export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1: TOKEN, tokenAmount: string): Promise<string> {
+  await wait(2000)
   const pair = await getPairAddress(token0, token1)
   const reverse = tokenToAddress(token0) < tokenToAddress(token1) ? false : true
   if (await isFirstDeposit(pair)) {
