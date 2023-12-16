@@ -6,8 +6,11 @@ import { Container, CssBaseline } from '@mui/material';
 import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
-import ErrorBoundary from './components/ErrorBoundary';
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from 'react-router-dom';
 import AddLiquidity from './pages/AddLiquidity';
 import ErrorPage from './pages/ErrorPage';
 import RemoveLiquidity from './pages/RemoveLiquidity';
@@ -25,36 +28,38 @@ const queryClient = new QueryClient({
       retry: 0,
     },
   },
-})
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 const router = createBrowserRouter([
   {
-    path: "/", element: <Root />, errorElement: <ErrorPage />,
+    path: '/',
+    element: <Root />,
+    errorElement: <ErrorPage />,
     children: [
-      { index: true, element: <Navigate to='/swap' /> },
-      { path: "/swap", element: <Swap /> },
+      { index: true, element: <Navigate to="/swap" /> },
+      { path: '/swap', element: <Swap /> },
       {
-        path: "/pool", element: <Pool />, children: [
-          { index: true, element: <Navigate to='/pool/add-liquidity' /> },
-          { path: "/pool/add-liquidity", element: <AddLiquidity /> },
-          { path: "/pool/remove-liquidity", element: <RemoveLiquidity /> }
-        ]
-      }
-    ]
+        path: '/pool',
+        element: <Pool />,
+        children: [
+          { index: true, element: <Navigate to="/pool/add-liquidity" /> },
+          { path: '/pool/add-liquidity', element: <AddLiquidity /> },
+          { path: '/pool/remove-liquidity', element: <RemoveLiquidity /> },
+        ],
+      },
+    ],
   },
-])
+]);
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <CssBaseline />
-        <Container maxWidth="md">
-          <RouterProvider router={router} />
-        </Container>
-      </ErrorBoundary>
+      <CssBaseline />
+      <Container maxWidth="md">
+        <RouterProvider router={router} />
+      </Container>
     </QueryClientProvider>
   </React.StrictMode>
 );

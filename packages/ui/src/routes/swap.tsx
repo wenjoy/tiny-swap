@@ -2,6 +2,7 @@ import { Container, Paper } from '@mui/material';
 import { useReducer, useState } from 'react';
 import { RefreshContext } from '..';
 import TokenPair from '../components/TokenPair';
+import useThrowAsyncError from '../hooks/useThrowAsyncError';
 import {
   getPairAddress,
   getProvider,
@@ -22,6 +23,7 @@ function Swap() {
   const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
   const [token0ValueLoading, setToken0ValueLoading] = useState(false);
   const [token1ValueLoading, setToken1ValueLoading] = useState(false);
+  const throwAsyncError = useThrowAsyncError();
 
   function resetTokenValue() {
     setToken0Value('');
@@ -69,25 +71,32 @@ function Swap() {
   }
 
   async function swapHandler() {
-    const pair = await getPairAddress(token0, token1);
-    const to = await getSigner();
-    const result = await tokenTransfer(token0, token0Value, pair);
-    const provider = await getProvider();
-
-    let receipt;
-    while (!receipt) {
-      receipt = await provider.getTransactionReceipt(result.hash);
-      await wait(200);
-    }
-
     try {
-      const result = await swap(token1, token1Value, to, pair);
-      forceUpdate();
-    } catch (err) {
-      console.error('Switch error: ', err);
-      //TODO: manually revert is not right
-      const resutl = await withDrawToken0(pair, token0, to, token0Value);
+      throw Error('test');
+      const pair = await getPairAddress(token0, token1);
+      const to = await getSigner();
+      const result = await tokenTransfer(token0, token0Value, pair);
+      const provider = await getProvider();
+
+      let receipt;
+      while (!receipt) {
+        receipt = await provider.getTransactionReceipt(result.hash);
+        await wait(200);
+      }
+
+      try {
+        await swap(token1, token1Value, to, pair);
+        forceUpdate();
+      } catch (err) {
+        console.error('swap error: ', err);
+        //TODO: manually revert is not right
+        const resutl = await withDrawToken0(pair, token0, to, token0Value);
+      }
+    } catch (error) {
+      console.log('swap-87', error);
+      throwAsyncError(error as Error);
     }
+
     resetTokenValue();
   }
 
