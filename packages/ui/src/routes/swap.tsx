@@ -1,6 +1,6 @@
 import { Container, Paper } from '@mui/material';
-import { useReducer, useState } from 'react';
-import { RefreshContext } from '..';
+import { useContext, useReducer, useState } from 'react';
+import { AlertContext, RefreshContext } from '..';
 import TokenPair from '../components/TokenPair';
 import useThrowAsyncError from '../hooks/useThrowAsyncError';
 import {
@@ -24,10 +24,14 @@ function Swap() {
   const [token0ValueLoading, setToken0ValueLoading] = useState(false);
   const [token1ValueLoading, setToken1ValueLoading] = useState(false);
   const throwAsyncError = useThrowAsyncError();
+  const { setAlertError } = useContext<AlertContext>(AlertContext);
 
   function resetTokenValue() {
     setToken0Value('');
     setToken1Value('');
+  }
+  function resetAlertError() {
+    setAlertError({ message: '' });
   }
 
   function token0ChangeHandler(token: TOKEN) {
@@ -47,6 +51,7 @@ function Swap() {
   }
 
   async function token0ValueChangeHandler(value: string) {
+    resetAlertError();
     setToken0Value(value);
     setToken1ValueLoading(true);
     const otherValue = await getTokenAmount(token0, token1, value);
@@ -54,6 +59,7 @@ function Swap() {
     setToken1ValueLoading(false);
   }
   async function token1ValueChangeHandler(value: string) {
+    resetAlertError();
     setToken1Value(value);
     setToken0ValueLoading(true);
     const otherValue = await getTokenAmount(token1, token0, value);
@@ -72,7 +78,6 @@ function Swap() {
 
   async function swapHandler() {
     try {
-      throw Error('test');
       const pair = await getPairAddress(token0, token1);
       const to = await getSigner();
       const result = await tokenTransfer(token0, token0Value, pair);
@@ -89,12 +94,13 @@ function Swap() {
         forceUpdate();
       } catch (err) {
         console.error('swap error: ', err);
+        setAlertError({ message: 'Swap failed, please try again later' });
         //TODO: manually revert is not right
         const resutl = await withDrawToken0(pair, token0, to, token0Value);
       }
     } catch (error) {
       console.log('swap-87', error);
-      throwAsyncError(error as Error);
+      setAlertError({ message: 'Transaction failed, please try again later' });
     }
 
     resetTokenValue();

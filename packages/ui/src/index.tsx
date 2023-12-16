@@ -3,7 +3,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import { Container, CssBaseline } from '@mui/material';
-import React, { createContext } from 'react';
+import React, { Dispatch, SetStateAction, createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import {
@@ -19,7 +19,15 @@ import Pool from './routes/pool';
 import Root from './routes/root';
 import Swap from './routes/swap';
 
+export type AlertContext = {
+  alertError: {
+    message: string;
+  };
+  setAlertError: Dispatch<SetStateAction<{ message: string }>>;
+};
 export const RefreshContext = createContext(null);
+export const AlertContext = createContext<AlertContext>(null!);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
