@@ -160,7 +160,7 @@ export async function getReserves(pair: address) {
 export async function withDrawToken0(pair: address, token: TOKEN, to: address, value: string) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi)
   const tokenDecimal = await tokenDeciamls(token)
-  const result = await pairContract.withdrawToken0(to, ethers.parseUnits(value, tokenDecimal))
+  const result = (await pairContract.withdrawToken0(to, ethers.parseUnits(value, tokenDecimal))).wait()
   return result
 }
 
@@ -183,7 +183,7 @@ export async function tokenTransfer(token: TOKEN, value: string, to: address) {
   const amount = ethers.parseUnits(value, tokenDecimal);
   const tokenAddes = tokenToAddress(token)
   const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
-  const result = await tokenCotract.transfer(to, amount)
+  const result = (await tokenCotract.transfer(to, amount)).wait()
   return result
 }
 
@@ -192,7 +192,8 @@ export async function tokenTransferFrom(token: TOKEN, value: string, from: addre
   const amount = ethers.parseUnits(value, tokenDecimal);
   const tokenAddes = tokenToAddress(token)
   const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
-  const result = await tokenCotract.transferFrom(from, to, amount)
+  const result = (await tokenCotract.transferFrom(from, to, amount)).wait()
+  return result
 }
 
 export function tokenToAddress(token: TOKEN): string {

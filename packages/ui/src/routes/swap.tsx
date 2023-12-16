@@ -1,8 +1,8 @@
 import { Container, Paper } from '@mui/material';
 import { useContext, useReducer, useState } from 'react';
 import { AlertContext, RefreshContext } from '..';
+import ProgressDialog from '../components/ProgressDialog';
 import TokenPair from '../components/TokenPair';
-import useThrowAsyncError from '../hooks/useThrowAsyncError';
 import {
   getPairAddress,
   getProvider,
@@ -16,6 +16,7 @@ import {
 import { TOKEN, TOKENS } from '../utils/const';
 
 function Swap() {
+  const totalStage = 2;
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0]);
   const [token1, setToken1] = useState<TOKEN>(TOKENS[1]);
   const [token0Value, setToken0Value] = useState('');
@@ -23,8 +24,8 @@ function Swap() {
   const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
   const [token0ValueLoading, setToken0ValueLoading] = useState(false);
   const [token1ValueLoading, setToken1ValueLoading] = useState(false);
-  const throwAsyncError = useThrowAsyncError();
   const { setAlertError } = useContext<AlertContext>(AlertContext);
+  const [currentStage, setCurrentStage] = useState(0);
 
   function resetTokenValue() {
     setToken0Value('');
@@ -77,6 +78,8 @@ function Swap() {
   }
 
   async function swapHandler() {
+    setCurrentStage(totalStage - 1);
+
     try {
       const pair = await getPairAddress(token0, token1);
       const to = await getSigner();
@@ -91,18 +94,24 @@ function Swap() {
 
       try {
         await swap(token1, token1Value, to, pair);
+        setCurrentStage(totalStage);
         forceUpdate();
       } catch (err) {
-        console.error('swap error: ', err);
         setAlertError({ message: 'Swap failed, please try again later' });
         //TODO: manually revert is not right
-        const resutl = await withDrawToken0(pair, token0, to, token0Value);
+        try {
+          const result = await withDrawToken0(pair, token0, to, token0Value);
+        } catch (err) {
+          setAlertError({
+            message: 'Transaction failed, please try again later',
+          });
+        }
       }
     } catch (error) {
-      console.log('swap-87', error);
       setAlertError({ message: 'Transaction failed, please try again later' });
     }
 
+    setCurrentStage(totalStage + 1);
     resetTokenValue();
   }
 
@@ -116,6 +125,7 @@ function Swap() {
         borderTopRightRadius: 0,
       }}
     >
+      <ProgressDialog totalStage={totalStage} currentStage={currentStage} />
       <Container maxWidth="xs" sx={{ mt: 8 }}>
         <RefreshContext.Provider value={refresh}>
           <TokenPair
