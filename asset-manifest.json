@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/tiny-swap/static/css/main.d9982248.css",
-    "main.js": "/tiny-swap/static/js/main.375d7d14.js",
+    "main.js": "/tiny-swap/static/js/main.d6e003e2.js",
     "static/js/787.1e83dcc9.chunk.js": "/tiny-swap/static/js/787.1e83dcc9.chunk.js",
     "static/media/roboto-latin-500-normal.woff2": "/tiny-swap/static/media/roboto-latin-500-normal.f25d774ecfe0996f8eb5.woff2",
     "static/media/roboto-latin-700-normal.woff2": "/tiny-swap/static/media/roboto-latin-700-normal.227c93190fe7f82de3f8.woff2",
@@ -61,11 +61,11 @@
     "static/media/roboto-greek-ext-700-normal.woff": "/tiny-swap/static/media/roboto-greek-ext-700-normal.249853776d22a271b2b5.woff",
     "index.html": "/tiny-swap/index.html",
     "main.d9982248.css.map": "/tiny-swap/static/css/main.d9982248.css.map",
-    "main.375d7d14.js.map": "/tiny-swap/static/js/main.375d7d14.js.map",
+    "main.d6e003e2.js.map": "/tiny-swap/static/js/main.d6e003e2.js.map",
     "787.1e83dcc9.chunk.js.map": "/tiny-swap/static/js/787.1e83dcc9.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.d9982248.css",
-    "static/js/main.375d7d14.js"
+    "static/js/main.d6e003e2.js"
   ]
 }
