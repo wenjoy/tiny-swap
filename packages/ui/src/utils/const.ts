@@ -15,3 +15,8 @@ TOKENS.forEach((token, index) => {
 });
 
 export const CHAIN_ID_SEPOLIA = '0xaa36a7'
+
+export enum TokenField {
+  Token0,
+  Token1,
+}

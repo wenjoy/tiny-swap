@@ -1,5 +1,5 @@
 import { Container } from '@mui/material';
-import { useContext, useReducer, useState } from 'react';
+import { useContext, useEffect, useReducer, useState } from 'react';
 import { AlertContext, RefreshContext } from '..';
 import ProgressDialog from '../components/ProgressDialog';
 import TokenPair from '../components/TokenPair';
@@ -10,19 +10,58 @@ import {
   mint,
   tokenTransfer,
 } from '../utils';
-import { TOKEN, TOKENS } from '../utils/const';
+import { TOKEN, TOKENS, TokenField } from '../utils/const';
 
 function AddLiquidity() {
-  const totalStage = 3;
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0]);
   const [token1, setToken1] = useState<TOKEN>(TOKENS[1]);
   const [token0Value, setToken0Value] = useState('');
   const [token1Value, setToken1Value] = useState('');
-  const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
   const [token0ValueLoading, setToken0ValueLoading] = useState(false);
   const [token1ValueLoading, setToken1ValueLoading] = useState(false);
   const { setAlertError } = useContext<AlertContext>(AlertContext);
+  const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
+  const totalStage = 3;
   const [currentStage, setCurrentStage] = useState(0);
+  const [currentField, setCurrentField] = useState<TokenField>();
+  const [isInternelState, setIsInternelState] = useState(false);
+
+  useEffect(() => {
+    async function tokenValueHandler() {
+      resetAlertError();
+
+      if (isInternelState) return;
+
+      if (currentField === TokenField.Token0) {
+        setToken1ValueLoading(true);
+        const otherValue = await calculateMinTokenAmountForLiquidity(
+          token0,
+          token1,
+          token0Value
+        );
+        if (otherValue) {
+          setToken1Value(otherValue);
+        }
+        setIsInternelState(true);
+        setToken1ValueLoading(false);
+      }
+
+      if (currentField === TokenField.Token1) {
+        setToken0ValueLoading(true);
+        const otherValue = await calculateMinTokenAmountForLiquidity(
+          token1,
+          token0,
+          token1Value
+        );
+        if (otherValue) {
+          setToken0Value(otherValue);
+        }
+        setIsInternelState(true);
+        setToken0ValueLoading(false);
+      }
+    }
+    tokenValueHandler();
+  }, [token0, token1, token0Value, token1Value, currentField]);
 
   function resetTokenValue() {
     setToken0Value('');
@@ -35,52 +74,34 @@ function AddLiquidity() {
 
   function token0ChangeHandler(token: TOKEN) {
     setToken0(token);
+    setCurrentField(TokenField.Token0);
+    setIsInternelState(false);
 
-    //TODO: token change should recalculate value also
     if (token === token1) {
       setToken1(token0);
     }
   }
+
   function token1ChangeHandler(token: TOKEN) {
     setToken1(token);
+    setCurrentField(TokenField.Token1);
+    setIsInternelState(false);
 
     if (token === token0) {
       setToken0(token1);
     }
   }
 
-  async function token0ValueChangeHandler(value: string) {
-    resetAlertError();
+  function token0ValueChangeHandler(value: string) {
+    setCurrentField(TokenField.Token0);
+    setIsInternelState(false);
     setToken0Value(value);
-    setToken1ValueLoading(true);
-    const otherValue = await calculateMinTokenAmountForLiquidity(
-      token0,
-      token1,
-      value
-    );
-    setTokensValue(setToken1Value, otherValue);
-    setToken1ValueLoading(false);
-  }
-  async function token1ValueChangeHandler(value: string) {
-    resetAlertError();
-    setToken1Value(value);
-    setToken0ValueLoading(true);
-    const otherValue = await calculateMinTokenAmountForLiquidity(
-      token1,
-      token0,
-      value
-    );
-    setTokensValue(setToken0Value, otherValue);
-    setToken0ValueLoading(false);
   }
 
-  async function setTokensValue(
-    setOtherFn: (value: React.SetStateAction<string>) => void,
-    otherValue: string
-  ) {
-    if (otherValue) {
-      setOtherFn(otherValue);
-    }
+  function token1ValueChangeHandler(value: string) {
+    setCurrentField(TokenField.Token1);
+    setIsInternelState(false);
+    setToken1Value(value);
   }
 
   async function addLiquidity() {
