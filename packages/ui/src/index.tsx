@@ -41,26 +41,31 @@ const queryClient = new QueryClient({
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <Root />,
+      errorElement: <ErrorPage />,
+      children: [
+        { index: true, element: <Navigate to="/swap" /> },
+        { path: '/swap', element: <Swap /> },
+        {
+          path: '/pool',
+          element: <Pool />,
+          children: [
+            { index: true, element: <Navigate to="/pool/add-liquidity" /> },
+            { path: '/pool/add-liquidity', element: <AddLiquidity /> },
+            { path: '/pool/remove-liquidity', element: <RemoveLiquidity /> },
+          ],
+        },
+      ],
+    },
+  ],
   {
-    path: '/',
-    element: <Root />,
-    errorElement: <ErrorPage />,
-    children: [
-      { index: true, element: <Navigate to="/swap" /> },
-      { path: '/swap', element: <Swap /> },
-      {
-        path: '/pool',
-        element: <Pool />,
-        children: [
-          { index: true, element: <Navigate to="/pool/add-liquidity" /> },
-          { path: '/pool/add-liquidity', element: <AddLiquidity /> },
-          { path: '/pool/remove-liquidity', element: <RemoveLiquidity /> },
-        ],
-      },
-    ],
-  },
-]);
+    basename: '/tiny-swap',
+  }
+);
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
