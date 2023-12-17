@@ -111,7 +111,7 @@ function Swap() {
       setAlertError({ message: 'Transaction failed, please try again later' });
     }
 
-    setCurrentStage(totalStage + 1);
+    setCurrentStage(0);
     resetTokenValue();
   }
 

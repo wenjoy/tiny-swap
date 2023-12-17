@@ -27,12 +27,14 @@ function ProgressDialog({
       });
     }, 500);
 
-    if (breakpoint > 100) {
+    if (breakpoint > 100 || breakpoint === 0) {
       clearInterval(timer);
+      setProgress(0);
     }
 
     return () => {
       clearInterval(timer);
+      setProgress(0);
     };
   }, [breakpoint]);
 
