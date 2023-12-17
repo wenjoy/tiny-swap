@@ -126,8 +126,9 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
 }
 export async function mint(pair: address, to: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
-  const result = (await pairContract.mint(to)).wait()
-  return result
+  const result = await pairContract.mint(to)
+  const receipt = await result.wait()
+  return receipt
 }
 
 export async function burn(pair: address, to: address) {
@@ -138,16 +139,16 @@ export async function burn(pair: address, to: address) {
 
   const transferResult = await pairContract.transferFrom(signer, pair, liquidity)
 
-  const result = (await pairContract.burn(to)).wait()
-  return result
+  const result = await pairContract.burn(to)
+  return result.wait()
 }
 
 export async function swap(token: TOKEN, value: string, to: address, pair: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi)
-  const tokenDecimal = await tokenDeciamls(token)
+  const tokenDecimal = await tokenDecimals(token)
   const amountOut = ethers.parseUnits(value, tokenDecimal);
-  const result = (await pairContract.swap(0, amountOut, to, '0x')).wait()
-  return result
+  const result = await pairContract.swap(0, amountOut, to, '0x')
+  return result.wait()
 }
 
 export async function getReserves(pair: address) {
@@ -159,9 +160,9 @@ export async function getReserves(pair: address) {
 
 export async function withDrawToken0(pair: address, token: TOKEN, to: address, value: string) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi)
-  const tokenDecimal = await tokenDeciamls(token)
-  const result = (await pairContract.withdrawToken0(to, ethers.parseUnits(value, tokenDecimal))).wait()
-  return result
+  const tokenDecimal = await tokenDecimals(token)
+  const result = await pairContract.withdrawToken0(to, ethers.parseUnits(value, tokenDecimal))
+  return result.wait()
 }
 
 //TOKEN specific
@@ -172,23 +173,25 @@ export async function tokenBalance(tokenAddress: address, owner?: address) {
   const result = ethers.formatUnits(balance, decimals)
   return toPrecision(parseFloat(result))
 }
-export async function tokenDeciamls(token: TOKEN) {
+export async function tokenDecimals(token: TOKEN) {
   const tokenAddress = tokenToAddress(token)
   const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
   const decimals = await tokenCotract.decimals();
   return decimals
 }
 export async function tokenTransfer(token: TOKEN, value: string, to: address) {
-  const tokenDecimal = await tokenDeciamls(token)
+  const tokenDecimal = await tokenDecimals(token)
   const amount = ethers.parseUnits(value, tokenDecimal);
-  const tokenAddes = tokenToAddress(token)
-  const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
-  const result = (await tokenCotract.transfer(to, amount)).wait()
-  return result
+  const tokenAddress = tokenToAddress(token)
+  const tokenCotract = await getContractWithSigner(tokenAddress, erc20ABI.abi)
+  const result = await tokenCotract.transfer(to, amount)
+  const receipt = await result.wait()
+  return receipt
 }
 
+//TODO: delete
 export async function tokenTransferFrom(token: TOKEN, value: string, from: address, to: address) {
-  const tokenDecimal = await tokenDeciamls(token)
+  const tokenDecimal = await tokenDecimals(token)
   const amount = ethers.parseUnits(value, tokenDecimal);
   const tokenAddes = tokenToAddress(token)
   const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)

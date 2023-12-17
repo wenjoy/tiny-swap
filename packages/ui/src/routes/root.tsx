@@ -35,6 +35,14 @@ function Root() {
           }
         });
     }
+
+    window.onerror = (error) => {
+      console.error(error);
+
+      setAlertError({
+        message: 'Unexpect error happend, please refresh page and try again',
+      });
+    };
   }, []);
 
   return (
