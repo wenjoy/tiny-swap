@@ -1,5 +1,6 @@
 import { Container, Paper } from '@mui/material';
 import { useContext, useEffect, useReducer, useState } from 'react';
+import ReactGA from 'react-ga';
 import { AlertContext, RefreshContext } from '..';
 import ProgressDialog from '../components/ProgressDialog';
 import TokenPair from '../components/TokenPair';
@@ -74,6 +75,11 @@ function Swap() {
     if (token === token1) {
       setToken1(token0);
     }
+    ReactGA.event({
+      category: 'Input',
+      action: 'change token 0',
+      label: 'Core logic',
+    });
   }
   function token1ChangeHandler(token: TOKEN) {
     setToken1(token);
@@ -83,20 +89,40 @@ function Swap() {
     if (token === token0) {
       setToken0(token1);
     }
+    ReactGA.event({
+      category: 'Input',
+      action: 'change token 1',
+      label: 'Core logic',
+    });
   }
 
   async function token0ValueChangeHandler(value: string) {
     setCurrentField(TokenField.Token0);
     setIsInternelState(false);
     setToken0Value(value);
+    ReactGA.event({
+      category: 'Input',
+      action: 'change token 0 value',
+      label: 'Core logic',
+    });
   }
   async function token1ValueChangeHandler(value: string) {
     setCurrentField(TokenField.Token1);
     setIsInternelState(false);
     setToken1Value(value);
+    ReactGA.event({
+      category: 'Input',
+      action: 'change token 1 value',
+      label: 'Core logic',
+    });
   }
 
   async function swapHandler() {
+    ReactGA.event({
+      category: 'Input',
+      action: 'swap',
+      label: 'Core logic',
+    });
     setCurrentStage(totalStage - 1);
 
     try {

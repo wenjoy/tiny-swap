@@ -1,4 +1,5 @@
 import { Box, Link, Typography } from '@mui/material';
+import ReactGA from 'react-ga';
 import { useRouteError } from 'react-router-dom';
 
 type RouteError = {
@@ -9,6 +10,12 @@ type RouteError = {
 function ErrorPage() {
   const error: RouteError = useRouteError() as RouteError;
   console.error(error);
+
+  ReactGA.event({
+    category: 'Error',
+    action: error.message,
+    label: 'Error page',
+  });
 
   return (
     <Box id="error-page">
