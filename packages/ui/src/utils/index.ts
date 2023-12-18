@@ -95,14 +95,18 @@ async function isFirstDeposit(pair: address) {
 export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1: TOKEN, tokenAmount: string): Promise<string> {
   await wait(2000)
   const pair = await getPairAddress(token0, token1)
-  const reverse = tokenToAddress(token0) < tokenToAddress(token1) ? false : true
   if (await isFirstDeposit(pair)) {
     return ''
   } else {
     const [reserve0, reserve1] = await getReserves(pair)
-    const numerator = reverse ? Number(tokenAmount) * Number(reserve1) : Number(tokenAmount) * Number(reserve0)
-    const denominator = reverse ? Number(reserve0) : Number(reserve1)
-    const anotherTokenAmount = numerator / denominator
+    const isInputToken0 = tokenToAddress(token0) < tokenToAddress(token1)
+    let anotherTokenAmount;
+
+    if(isInputToken0) {
+      anotherTokenAmount = Number(tokenAmount) * Number(reserve1) / Number(reserve0)
+     }else {
+      anotherTokenAmount = Number(tokenAmount)* Number(reserve0) / Number(reserve1)
+     }
     return anotherTokenAmount.toString()
   }
 }
