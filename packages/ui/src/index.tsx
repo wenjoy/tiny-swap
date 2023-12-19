@@ -5,7 +5,6 @@ import '@fontsource/roboto/700.css';
 import { Container, CssBaseline } from '@mui/material';
 import React, { Dispatch, SetStateAction, createContext } from 'react';
 import ReactDOM from 'react-dom/client';
-import ReactGA from 'react-ga';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import {
   Navigate,
@@ -67,7 +66,6 @@ const router = createBrowserRouter(
     basename: '/tiny-swap',
   }
 );
-ReactGA.initialize('G-JRSR214CGX');
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>

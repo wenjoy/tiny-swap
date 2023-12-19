@@ -1,6 +1,5 @@
 import { Container } from '@mui/material';
 import { useContext, useEffect, useReducer, useState } from 'react';
-import ReactGA from 'react-ga';
 import { AlertContext, RefreshContext } from '..';
 import ProgressDialog from '../components/ProgressDialog';
 import TokenPair from '../components/TokenPair';
@@ -81,11 +80,6 @@ function AddLiquidity() {
     if (token === token1) {
       setToken1(token0);
     }
-    ReactGA.event({
-      category: 'Input',
-      action: 'change token 0',
-      label: 'Core logic',
-    });
   }
 
   function token1ChangeHandler(token: TOKEN) {
@@ -96,41 +90,21 @@ function AddLiquidity() {
     if (token === token0) {
       setToken0(token1);
     }
-    ReactGA.event({
-      category: 'Input',
-      action: 'change token 1',
-      label: 'Core logic',
-    });
   }
 
   function token0ValueChangeHandler(value: string) {
     setCurrentField(TokenField.Token0);
     setIsInternelState(false);
     setToken0Value(value);
-    ReactGA.event({
-      category: 'Input',
-      action: 'change token 0 value',
-      label: 'Core logic',
-    });
   }
 
   function token1ValueChangeHandler(value: string) {
     setCurrentField(TokenField.Token1);
     setIsInternelState(false);
     setToken1Value(value);
-    ReactGA.event({
-      category: 'Input',
-      action: 'change token 1 value',
-      label: 'Core logic',
-    });
   }
 
   async function addLiquidity() {
-    ReactGA.event({
-      category: 'Input',
-      action: 'add liquidity',
-      label: 'Core logic',
-    });
     setCurrentStage(totalStage - 2);
 
     try {

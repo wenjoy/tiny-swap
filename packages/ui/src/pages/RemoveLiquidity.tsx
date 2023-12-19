@@ -9,7 +9,6 @@ import {
   Skeleton,
 } from '@mui/material';
 import { useContext, useReducer, useState } from 'react';
-import ReactGA from 'react-ga';
 import { useQuery } from 'react-query';
 import { AlertContext } from '..';
 import ProgressDialog from '../components/ProgressDialog';
@@ -51,11 +50,6 @@ function RemoveLiquidity() {
   }
 
   async function removeLiquidity() {
-    ReactGA.event({
-      category: 'Input',
-      action: 'remove liquidity',
-      label: 'Core logic',
-    });
     resetAlertError();
     setCurrentStage(totalStage);
 

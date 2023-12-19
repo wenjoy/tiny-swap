@@ -10,7 +10,6 @@ import {
   styled,
 } from '@mui/material';
 import { useState } from 'react';
-import ReactGA from 'react-ga';
 import TokenForm from '../components/TokenForm';
 import { TOKEN } from '../utils/const';
 import PairInfo from './PairInfo';
@@ -61,11 +60,6 @@ function TokenPair({
 
   const handleExpandClick = () => {
     setExpanded(!expanded);
-    ReactGA.event({
-      category: 'Query',
-      action: 'check reserves',
-      label: 'Other logic',
-    });
   };
 
   const ExpandMore = styled((props: ExpandMoreProps) => {

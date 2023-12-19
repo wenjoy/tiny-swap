@@ -7,8 +7,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import ReactGA from 'react-ga';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { NavLink, Outlet } from 'react-router-dom';
 import { AlertContext } from '..';
 import Account from '../components/Account';
 import { CHAIN_ID_SEPOLIA } from '../utils/const';
@@ -18,10 +17,6 @@ function Root() {
     { href: '/swap', name: 'Swap' },
     { href: '/pool', name: 'Pool' },
   ];
-  const location = useLocation();
-  useEffect(() => {
-    ReactGA.pageview(location.pathname + location.search);
-  }, [location]);
 
   const [alertError, setAlertError] = useState({ message: '' });
   useEffect(() => {
