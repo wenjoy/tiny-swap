@@ -3,6 +3,12 @@ import {
   AlertTitle,
   AppBar,
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Toolbar,
   Typography,
 } from '@mui/material';
@@ -19,6 +25,7 @@ function Root() {
   ];
 
   const [alertError, setAlertError] = useState({ message: '' });
+  const [openDialog, setOpenDialog] = useState(false);
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', () => window.location.reload());
@@ -39,15 +46,24 @@ function Root() {
     window.onerror = (error) => {
       console.error(error);
 
-      setAlertError({
-        message: 'Unexpect error happend, please refresh page and try again',
-      });
+      setOpenDialog(true);
     };
   }, []);
 
   return (
     <>
       <AlertContext.Provider value={{ alertError, setAlertError }}>
+        <Dialog open={openDialog}>
+          <DialogTitle>Error</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Unexpect error happend, please refresh page and try again
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => window.location.reload()}>Reload</Button>
+          </DialogActions>
+        </Dialog>
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6">Tinyswap</Typography>
