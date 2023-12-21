@@ -14,6 +14,7 @@ import {
 import AddLiquidity from './pages/AddLiquidity';
 import ErrorPage from './pages/ErrorPage';
 import RemoveLiquidity from './pages/RemoveLiquidity';
+import Stats from './pages/Stats';
 import reportWebVitals from './reportWebVitals';
 import Pool from './routes/pool';
 import Root from './routes/root';
@@ -50,6 +51,11 @@ const router = createBrowserRouter(
       children: [
         { index: true, element: <Navigate to="/swap" /> },
         { path: '/swap', element: <Swap /> },
+        {
+          path: '/stats',
+          element: <Stats />,
+          children: [{ path: ':account', element: <Stats /> }],
+        },
         {
           path: '/pool',
           element: <Pool />,
