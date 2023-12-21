@@ -46,12 +46,12 @@ function RemoveLiquidity() {
   const lpToken = data?.balance ?? 0;
 
   const list = [{ name: `${token0} / ${token1}` }];
-  function resetAlertError() {
+  function resetAlert() {
     setAlert({ severity: Severity.Success, message: '' });
   }
 
   async function removeLiquidity() {
-    resetAlertError();
+    resetAlert();
     setCurrentStage(totalStage);
 
     try {
@@ -68,6 +68,10 @@ function RemoveLiquidity() {
 
     setCurrentStage(0);
     forceUpdate();
+    setAlert({
+      severity: Severity.Success,
+      message: 'Congratulation! Swap successfully!',
+    });
   }
   return (
     <Card sx={{ padding: '20px' }}>

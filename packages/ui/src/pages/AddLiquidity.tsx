@@ -29,8 +29,6 @@ function AddLiquidity() {
 
   useEffect(() => {
     async function tokenValueHandler() {
-      resetAlertError();
-
       if (isInternelState) return;
 
       if (currentField === TokenField.Token0) {
@@ -69,11 +67,12 @@ function AddLiquidity() {
     setToken1Value('');
   }
 
-  function resetAlertError() {
+  function resetAlert() {
     setAlert({ severity: Severity.Success, message: '' });
   }
 
   function token0ChangeHandler(token: TOKEN) {
+    resetAlert();
     setToken0(token);
     setCurrentField(TokenField.Token0);
     setIsInternelState(false);
@@ -84,6 +83,7 @@ function AddLiquidity() {
   }
 
   function token1ChangeHandler(token: TOKEN) {
+    resetAlert();
     setToken1(token);
     setCurrentField(TokenField.Token1);
     setIsInternelState(false);
@@ -94,12 +94,14 @@ function AddLiquidity() {
   }
 
   function token0ValueChangeHandler(value: string) {
+    resetAlert();
     setCurrentField(TokenField.Token0);
     setIsInternelState(false);
     setToken0Value(value);
   }
 
   function token1ValueChangeHandler(value: string) {
+    resetAlert();
     setCurrentField(TokenField.Token1);
     setIsInternelState(false);
     setToken1Value(value);
@@ -126,6 +128,10 @@ function AddLiquidity() {
     setCurrentStage(0);
     resetTokenValue();
     forceUpdate();
+    setAlert({
+      severity: Severity.Success,
+      message: 'Congratulation! Swap successfully!',
+    });
   }
 
   return (

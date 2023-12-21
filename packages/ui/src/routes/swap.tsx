@@ -32,8 +32,6 @@ function Swap() {
 
   useEffect(() => {
     async function tokenValueHandler() {
-      resetAlertError();
-
       if (isInternelState) return;
 
       if (currentField === TokenField.Token0) {
@@ -63,11 +61,12 @@ function Swap() {
     setToken0Value('');
     setToken1Value('');
   }
-  function resetAlertError() {
+  function resetAlert() {
     setAlert({ severity: Severity.Success, message: '' });
   }
 
   function token0ChangeHandler(token: TOKEN) {
+    resetAlert();
     setToken0(token);
     setCurrentField(TokenField.Token0);
     setIsInternelState(false);
@@ -77,6 +76,7 @@ function Swap() {
     }
   }
   function token1ChangeHandler(token: TOKEN) {
+    resetAlert();
     setToken1(token);
     setCurrentField(TokenField.Token1);
     setIsInternelState(false);
@@ -87,11 +87,13 @@ function Swap() {
   }
 
   async function token0ValueChangeHandler(value: string) {
+    resetAlert();
     setCurrentField(TokenField.Token0);
     setIsInternelState(false);
     setToken0Value(value);
   }
   async function token1ValueChangeHandler(value: string) {
+    resetAlert();
     setCurrentField(TokenField.Token1);
     setIsInternelState(false);
     setToken1Value(value);
@@ -140,6 +142,10 @@ function Swap() {
 
     setCurrentStage(0);
     resetTokenValue();
+    setAlert({
+      severity: Severity.Success,
+      message: 'Congratulation! Swap successfully!',
+    });
   }
 
   return (
