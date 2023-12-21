@@ -3,6 +3,7 @@ import { useContext, useEffect, useReducer, useState } from 'react';
 import { AlertContext, RefreshContext } from '..';
 import ProgressDialog from '../components/ProgressDialog';
 import TokenPair from '../components/TokenPair';
+import { Severity } from '../routes/root';
 import {
   calculateMinTokenAmountForLiquidity,
   getPairAddress,
@@ -19,7 +20,7 @@ function AddLiquidity() {
   const [token1Value, setToken1Value] = useState('');
   const [token0ValueLoading, setToken0ValueLoading] = useState(false);
   const [token1ValueLoading, setToken1ValueLoading] = useState(false);
-  const { setAlertError } = useContext<AlertContext>(AlertContext);
+  const { setAlert } = useContext<AlertContext>(AlertContext);
   const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
   const totalStage = 3;
   const [currentStage, setCurrentStage] = useState(0);
@@ -69,7 +70,7 @@ function AddLiquidity() {
   }
 
   function resetAlertError() {
-    setAlertError({ message: '' });
+    setAlert({ severity: Severity.Success, message: '' });
   }
 
   function token0ChangeHandler(token: TOKEN) {
@@ -117,7 +118,10 @@ function AddLiquidity() {
 
       const result = await mint(pairAddress, signer);
     } catch (error) {
-      setAlertError({ message: 'Transaction failed, please try again later' });
+      setAlert({
+        severity: Severity.Error,
+        message: 'Transaction failed, please try again later',
+      });
     }
     setCurrentStage(0);
     resetTokenValue();

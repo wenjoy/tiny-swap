@@ -14,6 +14,7 @@ import {
   withDrawToken0,
 } from '../utils';
 import { TOKEN, TOKENS, TokenField } from '../utils/const';
+import { Severity } from './root';
 
 function Swap() {
   const [token0, setToken0] = useState<TOKEN>(TOKENS[0]);
@@ -23,7 +24,7 @@ function Swap() {
   const [token0ValueLoading, setToken0ValueLoading] = useState(false);
   const [token1ValueLoading, setToken1ValueLoading] = useState(false);
   const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
-  const { setAlertError } = useContext<AlertContext>(AlertContext);
+  const { setAlert } = useContext<AlertContext>(AlertContext);
   const totalStage = 2;
   const [currentStage, setCurrentStage] = useState(0);
   const [isInternelState, setIsInternelState] = useState(false);
@@ -63,7 +64,7 @@ function Swap() {
     setToken1Value('');
   }
   function resetAlertError() {
-    setAlertError({ message: '' });
+    setAlert({ severity: Severity.Success, message: '' });
   }
 
   function token0ChangeHandler(token: TOKEN) {
@@ -116,18 +117,25 @@ function Swap() {
         setCurrentStage(totalStage);
         forceUpdate();
       } catch (err) {
-        setAlertError({ message: 'Swap failed, please try again later' });
+        setAlert({
+          severity: Severity.Error,
+          message: 'Swap failed, please try again later',
+        });
         //TODO: manually revert is not right
         try {
           const result = await withDrawToken0(pair, token0, to, token0Value);
         } catch (err) {
-          setAlertError({
+          setAlert({
+            severity: Severity.Error,
             message: 'Transaction failed, please try again later',
           });
         }
       }
     } catch (error) {
-      setAlertError({ message: 'Transaction failed, please try again later' });
+      setAlert({
+        severity: Severity.Error,
+        message: 'Transaction failed, please try again later',
+      });
     }
 
     setCurrentStage(0);

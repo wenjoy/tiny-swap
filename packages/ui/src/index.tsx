@@ -17,14 +17,15 @@ import RemoveLiquidity from './pages/RemoveLiquidity';
 import Stats from './pages/Stats';
 import reportWebVitals from './reportWebVitals';
 import Pool from './routes/pool';
-import Root from './routes/root';
+import Root, { Severity } from './routes/root';
 import Swap from './routes/swap';
 
 export type AlertContext = {
-  alertError: {
+  alert: {
+    severity: Severity;
     message: string;
   };
-  setAlertError: Dispatch<SetStateAction<{ message: string }>>;
+  setAlert: Dispatch<SetStateAction<{ severity: Severity; message: string }>>;
 };
 export const RefreshContext = createContext(null);
 export const AlertContext = createContext<AlertContext>(null!);

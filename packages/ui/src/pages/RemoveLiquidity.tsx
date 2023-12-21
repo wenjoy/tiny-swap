@@ -12,6 +12,7 @@ import { useContext, useReducer, useState } from 'react';
 import { useQuery } from 'react-query';
 import { AlertContext } from '..';
 import ProgressDialog from '../components/ProgressDialog';
+import { Severity } from '../routes/root';
 import {
   burn,
   getLPTokenBalance,
@@ -30,7 +31,7 @@ async function fetchPairInfo(token0: TOKEN, token1: TOKEN) {
 
 function RemoveLiquidity() {
   const [refresh, forceUpdate] = useReducer((x) => x + 1, 0);
-  const { setAlertError } = useContext<AlertContext>(AlertContext);
+  const { setAlert } = useContext<AlertContext>(AlertContext);
   const token0 = TOKEN_A;
   const token1 = TOKEN_B;
   const totalStage = 1;
@@ -46,7 +47,7 @@ function RemoveLiquidity() {
 
   const list = [{ name: `${token0} / ${token1}` }];
   function resetAlertError() {
-    setAlertError({ message: '' });
+    setAlert({ severity: Severity.Success, message: '' });
   }
 
   async function removeLiquidity() {
@@ -59,7 +60,10 @@ function RemoveLiquidity() {
       const result = await burn(pairAddress, signer);
     } catch (error) {
       console.error(error);
-      setAlertError({ message: 'Transaction failed, please try again later' });
+      setAlert({
+        severity: Severity.Error,
+        message: 'Transaction failed, please try again later',
+      });
     }
 
     setCurrentStage(0);

@@ -18,13 +18,21 @@ import { AlertContext } from '..';
 import Account from '../components/Account';
 import { CHAIN_ID_SEPOLIA } from '../utils/const';
 
+export enum Severity {
+  Error = 'error',
+  Success = 'success',
+}
+
 function Root() {
   const routes = [
     { href: '/swap', name: 'Swap' },
     { href: '/pool', name: 'Pool' },
   ];
 
-  const [alertError, setAlertError] = useState({ message: '' });
+  const [alert, setAlert] = useState({
+    message: '',
+    severity: Severity.Success,
+  });
   const [openDialog, setOpenDialog] = useState(false);
   useEffect(() => {
     if (window.ethereum) {
@@ -34,7 +42,8 @@ function Root() {
         .request({ method: 'eth_chainId' })
         .then((chainId: string) => {
           if (chainId !== CHAIN_ID_SEPOLIA) {
-            setAlertError({
+            setAlert({
+              severity: Severity.Error,
               message: `
             This app only works on <strong>Sepolia</strong>, please change your network in <strong>Metamask</strong>
             `,
@@ -52,7 +61,7 @@ function Root() {
 
   return (
     <>
-      <AlertContext.Provider value={{ alertError, setAlertError }}>
+      <AlertContext.Provider value={{ alert, setAlert }}>
         <Dialog open={openDialog}>
           <DialogTitle>Error</DialogTitle>
           <DialogContent>
@@ -92,10 +101,10 @@ function Root() {
             <Account />
           </Toolbar>
         </AppBar>
-        {alertError.message && (
-          <Alert severity="error">
-            <AlertTitle>Error</AlertTitle>
-            <div dangerouslySetInnerHTML={{ __html: alertError.message }}></div>
+        {alert.message && (
+          <Alert severity={alert.severity}>
+            <AlertTitle>{alert.severity.toUpperCase()}</AlertTitle>
+            <div dangerouslySetInnerHTML={{ __html: alert.message }}></div>
           </Alert>
         )}
         <Box>
