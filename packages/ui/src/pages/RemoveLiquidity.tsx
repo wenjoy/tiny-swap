@@ -58,6 +58,11 @@ function RemoveLiquidity() {
       const pairAddress = await getPairAddress(token0, token1);
       const signer = await getSigner();
       const result = await burn(pairAddress, signer);
+      forceUpdate();
+      setAlert({
+        severity: Severity.Success,
+        message: 'Congratulation! Swap successfully!',
+      });
     } catch (error) {
       console.error(error);
       setAlert({
@@ -67,11 +72,6 @@ function RemoveLiquidity() {
     }
 
     setCurrentStage(0);
-    forceUpdate();
-    setAlert({
-      severity: Severity.Success,
-      message: 'Congratulation! Swap successfully!',
-    });
   }
   return (
     <Card sx={{ padding: '20px' }}>

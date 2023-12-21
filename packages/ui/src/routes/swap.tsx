@@ -102,10 +102,12 @@ function Swap() {
   async function swapHandler() {
     setCurrentStage(totalStage - 1);
 
+    //TODO: refine this error handling
     try {
       const pair = await getPairAddress(token0, token1);
       const to = await getSigner();
       const result = await tokenTransfer(token0, token0Value, pair);
+      console.log('swap-109-result', result);
       const provider = await getProvider();
 
       let receipt;
@@ -118,6 +120,10 @@ function Swap() {
         await swap(token1, token1Value, to, pair);
         setCurrentStage(totalStage);
         forceUpdate();
+        setAlert({
+          severity: Severity.Success,
+          message: 'Congratulation! Swap successfully!',
+        });
       } catch (err) {
         setAlert({
           severity: Severity.Error,
@@ -126,6 +132,10 @@ function Swap() {
         //TODO: manually revert is not right
         try {
           const result = await withDrawToken0(pair, token0, to, token0Value);
+          setAlert({
+            severity: Severity.Success,
+            message: 'Congratulation! Swap successfully!',
+          });
         } catch (err) {
           setAlert({
             severity: Severity.Error,
@@ -142,10 +152,6 @@ function Swap() {
 
     setCurrentStage(0);
     resetTokenValue();
-    setAlert({
-      severity: Severity.Success,
-      message: 'Congratulation! Swap successfully!',
-    });
   }
 
   return (

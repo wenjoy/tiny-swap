@@ -119,6 +119,11 @@ function AddLiquidity() {
       setCurrentStage(totalStage);
 
       const result = await mint(pairAddress, signer);
+      setAlert({
+        severity: Severity.Success,
+        message: 'Congratulation! Swap successfully!',
+      });
+      forceUpdate();
     } catch (error) {
       setAlert({
         severity: Severity.Error,
@@ -127,11 +132,6 @@ function AddLiquidity() {
     }
     setCurrentStage(0);
     resetTokenValue();
-    forceUpdate();
-    setAlert({
-      severity: Severity.Success,
-      message: 'Congratulation! Swap successfully!',
-    });
   }
 
   return (
