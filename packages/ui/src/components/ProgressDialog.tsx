@@ -1,6 +1,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
   LinearProgress,
   Typography,
 } from '@mui/material';
@@ -40,10 +41,10 @@ function ProgressDialog({
 
   return (
     <Dialog open={currentStage <= totalStage && currentStage !== 0}>
+      <DialogTitle>Transaction is in progress</DialogTitle>
       <DialogContent>
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          Transaction is in progress, please don't close current page
-        </Typography>
+        Please continue operation at your wallet
+        <Typography variant="h6" sx={{ mb: 2 }}></Typography>
         <LinearProgress variant="determinate" value={progress} />
       </DialogContent>
     </Dialog>
