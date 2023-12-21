@@ -122,9 +122,10 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
   const r0 = Number(reserve0)
   const r1 = Number(reserve1)
   const i = Number(tokenInAmount)
-  //NOTE: this can be wrong, if someone donation
-  // const tokenOutAmount = Number(balance1) - Number(reserve0) * Number(reserve1 )/ (Number(balance0)+ Number(tokenInAmount)*0.997)
-  const tokenOutAmount = b1 - r0 * r1 / (b0 + 0.997 * i)
+  // if denominator = b0 + i * 0.997 will lead to donation involved into calculate with whole value, not reduce 0.003 fee
+  // Note: below considering donation issue
+  const denominator =  (b0 + i) - (b0 + i - r0) * 0.003
+  const tokenOutAmount = b1 - r0 * r1 / denominator
   // in case circulating decimal lead to out amount larger than should be
   return (Math.floor(tokenOutAmount * 1000) / 1000).toString()
 }
