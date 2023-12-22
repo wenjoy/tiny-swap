@@ -107,7 +107,6 @@ function Swap() {
       const pair = await getPairAddress(token0, token1);
       const to = await getSigner();
       const result = await tokenTransfer(token0, token0Value, pair);
-      console.log('swap-109-result', result);
       const provider = await getProvider();
 
       let receipt;
@@ -157,7 +156,7 @@ function Swap() {
   return (
     <Paper
       sx={{
-        p: 2,
+        p: { xs: 0, md: 2 },
         height: '90vh',
         borderTop: 0,
         borderTopLeftRadius: 0,
@@ -165,7 +164,10 @@ function Swap() {
       }}
     >
       <ProgressDialog totalStage={totalStage} currentStage={currentStage} />
-      <Container maxWidth="xs" sx={{ mt: 8 }}>
+      <Container
+        maxWidth="xs"
+        sx={{ mt: { md: 8, sm: 4, xs: 0 }, pr: { xs: 0 } }}
+      >
         <RefreshContext.Provider value={refresh}>
           <TokenPair
             {...{

@@ -135,7 +135,10 @@ function AddLiquidity() {
   }
 
   return (
-    <Container maxWidth="sm">
+    <Container
+      maxWidth="sm"
+      sx={{ mt: { md: 8, sm: 4, xs: 0 }, pr: { xs: 0 } }}
+    >
       <ProgressDialog totalStage={totalStage} currentStage={currentStage} />
       <RefreshContext.Provider value={refresh}>
         <TokenPair

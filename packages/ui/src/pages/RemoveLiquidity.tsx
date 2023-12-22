@@ -74,7 +74,19 @@ function RemoveLiquidity() {
     setCurrentStage(0);
   }
   return (
-    <Card sx={{ padding: '20px' }}>
+    <Card
+      sx={{
+        padding: {
+          xs: 0,
+          sm: '20px',
+        },
+        boxShadow: {
+          xs: 0,
+          sm: 1,
+          md: 2,
+        },
+      }}
+    >
       {isLoading ? (
         <Box>
           <Skeleton variant="text" width={60} height={40} />
@@ -108,8 +120,14 @@ function RemoveLiquidity() {
                   </IconButton>
                 }
               >
-                <ListItemText primary={name} />
-                <ListItemText primary={lpToken.toString()} />
+                <ListItemText
+                  sx={{ width: { xs: 50, sm: 'auto' }, wordWrap: 'break-word' }}
+                  primary={name}
+                />
+                <ListItemText
+                  sx={{ width: { xs: 50, sm: 'auto' }, wordWrap: 'break-word' }}
+                  primary={lpToken}
+                />
               </ListItem>
             ))}
           </List>

@@ -1,7 +1,6 @@
 import {
   Alert,
   AlertTitle,
-  AppBar,
   Box,
   Button,
   Dialog,
@@ -9,13 +8,11 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Toolbar,
-  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { AlertContext } from '..';
-import Account from '../components/Account';
+import NavBar from '../components/NavBar';
 import { CHAIN_ID_SEPOLIA } from '../utils/const';
 
 export enum Severity {
@@ -73,34 +70,7 @@ function Root() {
             <Button onClick={() => window.location.reload()}>Reload</Button>
           </DialogActions>
         </Dialog>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography variant="h6">Tinyswap</Typography>
-            <Box sx={{ flexGrow: 1 }}>
-              {routes.map(({ href, name }) => (
-                <NavLink
-                  key={name}
-                  to={href}
-                  style={{ textDecoration: 'none' }}
-                >
-                  {({ isActive, isPending, isTransitioning }) => (
-                    <Typography
-                      sx={{
-                        ml: 2,
-                        display: 'inline',
-                        ':hover': { color: '#f4dfc8' },
-                      }}
-                      color={isActive ? '#ffd28f' : '#fff'}
-                    >
-                      {name}
-                    </Typography>
-                  )}
-                </NavLink>
-              ))}
-            </Box>
-            <Account />
-          </Toolbar>
-        </AppBar>
+        <NavBar routes={routes} />
         {alert.message && (
           <Alert severity={alert.severity}>
             <AlertTitle>{alert.severity.toUpperCase()}</AlertTitle>

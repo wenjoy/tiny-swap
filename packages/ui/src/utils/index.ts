@@ -84,7 +84,7 @@ export async function getLPTokenBalance(pair: address) {
   const balance = await pairContract.balanceOf(signer)
   const decimals = await pairContract.decimals()
   const result = ethers.formatUnits(balance, decimals)
-  return result
+  return toPrecision(parseFloat(result))
 }
 
 async function isFirstDeposit(pair: address) {

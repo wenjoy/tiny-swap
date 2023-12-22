@@ -74,7 +74,17 @@ function TokenPair({
   }));
 
   return (
-    <Card sx={{ minWidth: 275, maxWidth: 475, pb: '20px' }}>
+    <Card
+      sx={{
+        maxWidth: 475,
+        pb: '20px',
+        boxShadow: {
+          xs: 0,
+          sm: 1,
+          md: 2,
+        },
+      }}
+    >
       <CardContent
         sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}
       >

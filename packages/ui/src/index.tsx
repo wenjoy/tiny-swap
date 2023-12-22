@@ -2,7 +2,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { Container, CssBaseline } from '@mui/material';
+import { Container, CssBaseline, styled } from '@mui/material';
 import React, { Dispatch, SetStateAction, createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -73,13 +73,20 @@ const router = createBrowserRouter(
     basename: '/tiny-swap',
   }
 );
+
+const Wrapper = styled(Container)(({ theme }) => ({
+  [theme.breakpoints.down('md')]: {
+    padding: 0,
+  },
+}));
+
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <CssBaseline />
-      <Container maxWidth="md">
+      <Wrapper maxWidth="md">
         <RouterProvider router={router} />
-      </Container>
+      </Wrapper>
     </QueryClientProvider>
   </React.StrictMode>
 );

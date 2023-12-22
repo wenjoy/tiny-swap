@@ -29,10 +29,10 @@ function TokenForm({
 }) {
   return (
     <Box sx={{ margin: '10px 0' }}>
-      <FormControl>
+      <FormControl sx={{ width: { xs: '100%', sm: 'auto' }, mb: { xs: 1 } }}>
         <InputLabel htmlFor="token-value">Amount</InputLabel>
         <OutlinedInput
-          sx={{ mr: 2, width: 200 }}
+          sx={{ mr: 2, width: { xs: '100%', sm: 200 } }}
           disabled={disabled || loading}
           placeholder="0.0"
           id="token-value"
@@ -50,6 +50,7 @@ function TokenForm({
         />
       </FormControl>
       <Select
+        sx={{ width: { xs: '100%', sm: 'auto' } }}
         value={token}
         onChange={(event) => onTokenChange(event.target.value as TOKEN)}
       >

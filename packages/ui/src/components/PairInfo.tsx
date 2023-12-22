@@ -51,7 +51,7 @@ function PairInfo({
       <Divider sx={{ mb: 4 }} />
       <Stack
         direction="row"
-        spacing={8}
+        spacing={4}
         justifyContent="center"
         divider={<Divider orientation="vertical" flexItem />}
       >
