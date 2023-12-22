@@ -8,6 +8,8 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Link,
+  Typography,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
@@ -31,6 +33,8 @@ function Root() {
     severity: Severity.Success,
   });
   const [openDialog, setOpenDialog] = useState(false);
+  const [noteDialog, setNoteDialog] = useState(true);
+
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', () => window.location.reload());
@@ -51,7 +55,6 @@ function Root() {
 
     window.onerror = (error) => {
       console.error(error);
-
       setOpenDialog(true);
     };
   }, []);
@@ -70,6 +73,25 @@ function Root() {
             <Button onClick={() => window.location.reload()}>Reload</Button>
           </DialogActions>
         </Dialog>
+
+        <Dialog open={noteDialog}>
+          <DialogTitle>NOTE</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              This app is specifically designed for mastering Uniswap. If you're
+              keen on trying it out, please send me an email, and I'll provide
+              you with some test tokens.
+            </DialogContentText>
+            <DialogContentText>
+              <Link href="mailto:laojiaodaoniu@gmail.com">Send email</Link>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setNoteDialog(false)}>Dismiss</Button>
+          </DialogActions>
+          <Typography></Typography>
+        </Dialog>
+
         <NavBar routes={routes} />
         {alert.message && (
           <Alert severity={alert.severity}>
