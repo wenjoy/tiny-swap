@@ -27,6 +27,7 @@ function TokenForm({
   disabled?: boolean;
   loading?: boolean;
 }) {
+  const handleInput = () => {};
   return (
     <Box sx={{ margin: '10px 0' }}>
       <FormControl sx={{ width: { xs: '100%', sm: 'auto' }, mb: { xs: 1 } }}>
@@ -39,6 +40,9 @@ function TokenForm({
           type="number"
           label="Amount"
           value={tokenValue}
+          inputProps={{
+            min: 0,
+          }}
           endAdornment={
             loading ? (
               <InputAdornment position="end">
@@ -46,6 +50,11 @@ function TokenForm({
               </InputAdornment>
             ) : null
           }
+          onKeyDown={(event) => {
+            if (['-', '+'].includes(event.key)) {
+              event.preventDefault();
+            }
+          }} //only allow positive number
           onChange={(event) => onTokenValueChange(event.target.value)}
         />
       </FormControl>
