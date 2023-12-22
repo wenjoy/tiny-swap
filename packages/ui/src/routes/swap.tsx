@@ -8,6 +8,7 @@ import {
   getProvider,
   getSigner,
   getTokenAmount,
+  isNotSufficient,
   swap,
   tokenTransfer,
   wait,
@@ -100,6 +101,13 @@ function Swap() {
   }
 
   async function swapHandler() {
+    if (await isNotSufficient(token0, token1, token0Value, token1Value)) {
+      setAlert({
+        severity: Severity.Error,
+        message: 'Token balance is not sufficient',
+      });
+      return;
+    }
     setCurrentStage(totalStage - 1);
 
     //TODO: refine this error handling

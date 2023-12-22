@@ -73,6 +73,20 @@ function TokenPair({
     }),
   }));
 
+  const buttonText = () => {
+    let text = submitButtonText;
+
+    if (disabled) {
+      text = 'Please input amount';
+    }
+
+    if (token0ValueLoading || token1ValueLoading) {
+      text = 'Cauculating amount';
+    }
+
+    return text;
+  };
+
   return (
     <Card
       sx={{
@@ -112,11 +126,7 @@ function TokenPair({
           onClick={submitHandler}
           disabled={disabled || token0ValueLoading || token1ValueLoading}
         >
-          {disabled
-            ? 'Please input amount'
-            : token0ValueLoading || token1ValueLoading
-            ? 'Cauculating amount'
-            : submitButtonText}
+          {buttonText()}
         </Button>
         <ExpandMore
           expand={expanded}

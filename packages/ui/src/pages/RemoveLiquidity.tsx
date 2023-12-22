@@ -115,7 +115,10 @@ function RemoveLiquidity() {
               <ListItem
                 key={name}
                 secondaryAction={
-                  <IconButton onClick={removeLiquidity}>
+                  <IconButton
+                    disabled={Number(lpToken) <= 0}
+                    onClick={removeLiquidity}
+                  >
                     <Delete />
                   </IconButton>
                 }

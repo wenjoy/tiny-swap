@@ -8,6 +8,7 @@ import {
   calculateMinTokenAmountForLiquidity,
   getPairAddress,
   getSigner,
+  isNotSufficient,
   mint,
   tokenTransfer,
 } from '../utils';
@@ -108,6 +109,13 @@ function AddLiquidity() {
   }
 
   async function addLiquidity() {
+    if (await isNotSufficient(token0, token1, token0Value, token1Value)) {
+      setAlert({
+        severity: Severity.Error,
+        message: 'Token balance is not sufficient',
+      });
+      return;
+    }
     setCurrentStage(totalStage - 2);
 
     try {

@@ -171,6 +171,11 @@ export async function withDrawToken0(pair: address, token: TOKEN, to: address, v
 }
 
 //TOKEN specific
+ export async function isNotSufficient(token0: TOKEN, token1: TOKEN, token0Value: string, token1Value: string) {
+    const balance0 = await tokenBalance(tokenToAddress(token0))
+    const balance1 = await tokenBalance(tokenToAddress(token1))
+    return Number(balance0) < Number(token0Value ) || Number(balance1 ) < Number(token1Value)
+  }
 export async function tokenBalance(tokenAddress: address, owner?: address) {
   const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
   const decimals = await tokenCotract.decimals();
