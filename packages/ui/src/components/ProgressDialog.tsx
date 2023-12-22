@@ -43,7 +43,7 @@ function ProgressDialog({
     <Dialog open={currentStage <= totalStage && currentStage !== 0}>
       <DialogTitle>Transaction is in progress</DialogTitle>
       <DialogContent>
-        Please continue operation at your wallet
+        Please continue the operation using your wallet.
         <Typography variant="h6" sx={{ mb: 2 }}></Typography>
         <LinearProgress variant="determinate" value={progress} />
       </DialogContent>
