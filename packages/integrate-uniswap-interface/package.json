@@ -1,5 +1,5 @@
 {
-  "name": "uniswap-demo",
+  "name": "integrate-uniswap-interface",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
