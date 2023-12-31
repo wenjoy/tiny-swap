@@ -39,6 +39,7 @@ async function getContractWithSigner(contractAddress: address, abi: ethers.Inter
 }
 
 export async function getSigner() {
+  console.log('index-42', 'im called')
   const provider = getProvider();
   const signer = await provider.getSigner();
   return signer
@@ -102,11 +103,11 @@ export async function calculateMinTokenAmountForLiquidity(token0: TOKEN, token1:
     const isInputToken0 = tokenToAddress(token0) < tokenToAddress(token1)
     let anotherTokenAmount;
 
-    if(isInputToken0) {
+    if (isInputToken0) {
       anotherTokenAmount = Number(tokenAmount) * Number(reserve1) / Number(reserve0)
-     }else {
-      anotherTokenAmount = Number(tokenAmount)* Number(reserve0) / Number(reserve1)
-     }
+    } else {
+      anotherTokenAmount = Number(tokenAmount) * Number(reserve0) / Number(reserve1)
+    }
     return anotherTokenAmount.toString()
   }
 }
@@ -124,7 +125,7 @@ export async function getTokenAmount(token0: TOKEN, token1: TOKEN, tokenInAmount
   const i = Number(tokenInAmount)
   // if denominator = b0 + i * 0.997 will lead to donation involved into calculate with whole value, not reduce 0.003 fee
   // Note: below considering donation issue
-  const denominator =  (b0 + i) - (b0 + i - r0) * 0.003
+  const denominator = (b0 + i) - (b0 + i - r0) * 0.003
   const tokenOutAmount = b1 - r0 * r1 / denominator
   // in case circulating decimal lead to out amount larger than should be
   return (Math.floor(tokenOutAmount * 1000) / 1000).toString()
@@ -171,11 +172,11 @@ export async function withDrawToken0(pair: address, token: TOKEN, to: address, v
 }
 
 //TOKEN specific
- export async function isNotSufficient(token0: TOKEN, token1: TOKEN, token0Value: string, token1Value: string) {
-    const balance0 = await tokenBalance(tokenToAddress(token0))
-    const balance1 = await tokenBalance(tokenToAddress(token1))
-    return Number(balance0) < Number(token0Value ) || Number(balance1 ) < Number(token1Value)
-  }
+export async function isNotSufficient(token0: TOKEN, token1: TOKEN, token0Value: string, token1Value: string) {
+  const balance0 = await tokenBalance(tokenToAddress(token0))
+  const balance1 = await tokenBalance(tokenToAddress(token1))
+  return Number(balance0) < Number(token0Value) || Number(balance1) < Number(token1Value)
+}
 export async function tokenBalance(tokenAddress: address, owner?: address) {
   const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
   const decimals = await tokenCotract.decimals();
