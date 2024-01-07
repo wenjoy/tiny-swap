@@ -1,10 +1,15 @@
+import { appendFileSync, writeFileSync } from "fs";
 import { ethers } from "hardhat";
+import { resolve } from "path";
 import { ERC20, UniswapV2Factory } from '../typechain-types';
+
+const { FACTORY_ADDRESS, TOKEN0_ADDRESS, TOKEN1_ADDRESS } = process.env
 
 function uintTransform(value: number) {
   return ethers.parseUnits(value.toString(), 18)
 }
 
+let count = 0;
 async function getContract<T>(name: string, args: any[], address?: string): Promise<[T, string]> {
   const [deployer] = await ethers.getSigners();
 
@@ -14,16 +19,30 @@ async function getContract<T>(name: string, args: any[], address?: string): Prom
 
   const contract = await ethers.deployContract(name, args, deployer);
   const contractAddress = await contract.getAddress()
-  console.log("contract deployed at: %s, by %s", contractAddress, deployer);
+  console.log("contract %s deployed at: %s, by %s", name, contractAddress, deployer);
+  const path = resolve(__dirname, '../../tiny-swap-ui/.env')
+  console.log('deploy-23-path', path)
+
+  if (name === "UniswapV2Factory") {
+    writeFileSync(path, `REACT_APP_FACTORY_ADDRESS=${contractAddress}\n`)
+  }
+  if (name === "ERC20") {
+    if (count > 0) {
+      appendFileSync(path, `REACT_APP_TOKEN_B_ADDRESS=${contractAddress}\n`)
+    } else {
+      count++
+      appendFileSync(path, `REACT_APP_TOKEN_A_ADDRESS=${contractAddress}\n`)
+    }
+  }
   return [contract as T, contractAddress]
 }
 
 async function main() {
   const [deployer] = await ethers.getSigners();
 
-  const [factory] = await getContract<UniswapV2Factory>("UniswapV2Factory", [deployer], '0x6255a84B94422a8d8B492542Bd03703d7a7ac34a')
-  const [token0, token0Address] = await getContract<ERC20>('ERC20', [], '0x03f6a4b75E3cA56c87873Fc0CFA58577FF26E9bb')
-  const [token1, token1Address] = await getContract<ERC20>('ERC20', [], '0xCCc18761954De1472c2F68787Dad13C5D066e7Ff')
+  const [factory] = await getContract<UniswapV2Factory>("UniswapV2Factory", [deployer], FACTORY_ADDRESS)
+  const [token0, token0Address] = await getContract<ERC20>('ERC20', [], TOKEN0_ADDRESS)
+  const [token1, token1Address] = await getContract<ERC20>('ERC20', [], TOKEN1_ADDRESS)
 
   let pairAddress = await factory.getPair(token0Address, token1Address);
 
@@ -40,7 +59,7 @@ async function main() {
 
   await factory.createPair(token0Address, token1Address)
   pairAddress = await factory.getPair(token0Address, token1Address);
-  console.log('deploy-38-result', pairAddress)
+  console.log('pair address is: ', pairAddress)
 }
 
 main()
