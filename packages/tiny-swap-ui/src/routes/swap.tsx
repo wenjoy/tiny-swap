@@ -28,12 +28,12 @@ function Swap() {
   const { setAlert } = useContext<AlertContext>(AlertContext);
   const totalStage = 2;
   const [currentStage, setCurrentStage] = useState(0);
-  const [isInternelState, setIsInternelState] = useState(false);
+  const [isInternalState, setIsInternalState] = useState(false);
   const [currentField, setCurrentField] = useState<TokenField>();
 
   useEffect(() => {
     async function tokenValueHandler() {
-      if (isInternelState) return;
+      if (isInternalState) return;
 
       if (currentField === TokenField.Token0) {
         setToken1ValueLoading(true);
@@ -41,7 +41,7 @@ function Swap() {
         if (otherValue) {
           setToken1Value(otherValue);
         }
-        setIsInternelState(true);
+        setIsInternalState(true);
         setToken1ValueLoading(false);
       }
 
@@ -51,7 +51,7 @@ function Swap() {
         if (otherValue) {
           setToken0Value(otherValue);
         }
-        setIsInternelState(true);
+        setIsInternalState(true);
         setToken0ValueLoading(false);
       }
     }
@@ -70,7 +70,7 @@ function Swap() {
     resetAlert();
     setToken0(token);
     setCurrentField(TokenField.Token0);
-    setIsInternelState(false);
+    setIsInternalState(false);
 
     if (token === token1) {
       setToken1(token0);
@@ -80,7 +80,7 @@ function Swap() {
     resetAlert();
     setToken1(token);
     setCurrentField(TokenField.Token1);
-    setIsInternelState(false);
+    setIsInternalState(false);
 
     if (token === token0) {
       setToken0(token1);
@@ -90,13 +90,13 @@ function Swap() {
   async function token0ValueChangeHandler(value: string) {
     resetAlert();
     setCurrentField(TokenField.Token0);
-    setIsInternelState(false);
+    setIsInternalState(false);
     setToken0Value(value);
   }
   async function token1ValueChangeHandler(value: string) {
     resetAlert();
     setCurrentField(TokenField.Token1);
-    setIsInternelState(false);
+    setIsInternalState(false);
     setToken1Value(value);
   }
 

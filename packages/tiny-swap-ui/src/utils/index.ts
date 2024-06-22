@@ -16,6 +16,7 @@ type address = ethers.AddressLike
 
 export function getProvider() {
   if (window.ethereum == null) {
+    //TODO: strange behavior, should throw error at least
     console.warn('Metamask not installed')
     //TODO: resolve type issue
     // provider = new ethers.JsonRpcProvider();
@@ -177,25 +178,26 @@ export async function isNotSufficient(token0: TOKEN, token1: TOKEN, token0Value:
   const balance1 = await tokenBalance(tokenToAddress(token1))
   return Number(balance0) < Number(token0Value) || Number(balance1) < Number(token1Value)
 }
-export async function tokenBalance(tokenAddress: address, owner?: address) {
-  const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
-  const decimals = await tokenCotract.decimals();
-  const balance = await tokenCotract.balanceOf(owner ?? await getSigner())
+export async function tokenBalance(tokenContractAddress: address, owner?: address) {
+  const tokenContract = await getContract(tokenContractAddress, erc20ABI.abi)
+  const decimals = await tokenContract.decimals();
+  //TODO: Bad practice, why here is getSigner()? no one knows
+  const balance = await tokenContract.balanceOf(owner ?? await getSigner())
   const result = ethers.formatUnits(balance, decimals)
   return toPrecision(parseFloat(result))
 }
 export async function tokenDecimals(token: TOKEN) {
   const tokenAddress = tokenToAddress(token)
-  const tokenCotract = await getContract(tokenAddress, erc20ABI.abi)
-  const decimals = await tokenCotract.decimals();
+  const tokenContract = await getContract(tokenAddress, erc20ABI.abi)
+  const decimals = await tokenContract.decimals();
   return decimals
 }
 export async function tokenTransfer(token: TOKEN, value: string, to: address) {
   const tokenDecimal = await tokenDecimals(token)
   const amount = ethers.parseUnits(value, tokenDecimal);
   const tokenAddress = tokenToAddress(token)
-  const tokenCotract = await getContractWithSigner(tokenAddress, erc20ABI.abi)
-  const result = await tokenCotract.transfer(to, amount)
+  const tokenContract = await getContractWithSigner(tokenAddress, erc20ABI.abi)
+  const result = await tokenContract.transfer(to, amount)
   const receipt = await result.wait()
   return receipt
 }
@@ -204,9 +206,9 @@ export async function tokenTransfer(token: TOKEN, value: string, to: address) {
 export async function tokenTransferFrom(token: TOKEN, value: string, from: address, to: address) {
   const tokenDecimal = await tokenDecimals(token)
   const amount = ethers.parseUnits(value, tokenDecimal);
-  const tokenAddes = tokenToAddress(token)
-  const tokenCotract = await getContractWithSigner(tokenAddes, erc20ABI.abi)
-  const result = (await tokenCotract.transferFrom(from, to, amount)).wait()
+  const tokenAddress = tokenToAddress(token)
+  const tokenContract = await getContractWithSigner(tokenAddress, erc20ABI.abi)
+  const result = (await tokenContract.transferFrom(from, to, amount)).wait()
   return result
 }
 
