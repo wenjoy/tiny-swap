@@ -1,7 +1,7 @@
-import { ReactElement } from 'react'
+import { ReactElement } from 'react';
 
-function Panel ({children}: {children: ReactElement[]}) {
-  return <div className="Panel">{children}</div>
+function Panel({ children }: { children: ReactElement[] }) {
+  return <div className="Panel">{children}</div>;
 }
 
-export default Panel
+export default Panel;

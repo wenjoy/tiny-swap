@@ -3,13 +3,13 @@ import Account from './Account';
 
 jest.mock('../utils', () => {
   return {
-    getSigner: jest.fn(() => ({ address: '0x1234' }))
-  }
-})
+    getSigner: jest.fn(() => ({ address: '0x1234' })),
+  };
+});
 
 test('should show account info', async () => {
-  render(<Account />)
+  render(<Account />);
   await waitFor(() => {
-    screen.getByText(/0x12/)
-  })
-})
+    screen.getByText(/0x12/);
+  });
+});

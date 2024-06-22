@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 const useThrowAsyncError = () => {
-  const [state, setState] = useState()
+  const [state, setState] = useState();
 
   return (error: Error) => {
-    setState(() => {throw error})
-  }
-}
+    setState(() => {
+      throw error;
+    });
+  };
+};
 
-export default useThrowAsyncError
+export default useThrowAsyncError;
