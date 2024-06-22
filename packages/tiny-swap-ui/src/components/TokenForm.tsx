@@ -15,8 +15,8 @@ import Balance from './Balance';
 function TokenForm({
   token,
   onTokenChange,
-  tokenValue,
-  onTokenValueChange,
+  tokenValue: inputValue,
+  onTokenValueChange: onInputValueChange,
   disabled,
   loading,
 }: {
@@ -27,7 +27,6 @@ function TokenForm({
   disabled?: boolean;
   loading?: boolean;
 }) {
-  const handleInput = () => {};
   return (
     <Box sx={{ margin: '10px 0' }}>
       <FormControl sx={{ width: { xs: '100%', sm: 'auto' }, mb: { xs: 1 } }}>
@@ -39,7 +38,7 @@ function TokenForm({
           id="token-value"
           type="number"
           label="Amount"
-          value={tokenValue}
+          value={inputValue}
           inputProps={{
             min: 0,
           }}
@@ -55,7 +54,7 @@ function TokenForm({
               event.preventDefault();
             }
           }} //only allow positive number
-          onChange={(event) => onTokenValueChange(event.target.value)}
+          onChange={(event) => onInputValueChange(event.target.value)}
         />
       </FormControl>
       <Select

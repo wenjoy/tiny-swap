@@ -134,15 +134,15 @@ export async function calculateMinTokenAmountForLiquidity(
   }
 }
 
-export async function getTokenAmount(
+export async function calculateTokenOutAmount(
   token0: TOKEN,
   token1: TOKEN,
   tokenInAmount: string
 ) {
-  const pair = await getPairAddress(token0, token1);
-  const balance0 = await tokenBalance(tokenToAddress(token0), pair);
-  const balance1 = await tokenBalance(tokenToAddress(token1), pair);
-  const [reserve0, reserve1] = await getReserves(pair);
+  const pairAddress = await getPairAddress(token0, token1);
+  const balance0 = await tokenBalance(tokenToAddress(token0), pairAddress);
+  const balance1 = await tokenBalance(tokenToAddress(token1), pairAddress);
+  const [reserve0, reserve1] = await getReserves(pairAddress);
 
   const b0 = Number(balance0);
   const b1 = Number(balance1);
@@ -156,6 +156,7 @@ export async function getTokenAmount(
   // in case circulating decimal lead to out amount larger than should be
   return (Math.floor(tokenOutAmount * 1000) / 1000).toString();
 }
+
 export async function mint(pair: address, to: address) {
   const pairContract = await getContractWithSigner(pair, pairABI.abi);
   const result = await pairContract.mint(to);
@@ -232,12 +233,12 @@ export async function isNotSufficient(
 }
 export async function tokenBalance(
   tokenContractAddress: address,
-  owner?: address
+  account?: address
 ) {
   const tokenContract = await getContract(tokenContractAddress, erc20ABI.abi);
   const decimals = await tokenContract.decimals();
   //TODO: Bad practice, why here is getSigner()? no one knows
-  const balance = await tokenContract.balanceOf(owner ?? (await getSigner()));
+  const balance = await tokenContract.balanceOf(account ?? (await getSigner()));
   const result = ethers.formatUnits(balance, decimals);
   return toPrecision(parseFloat(result));
 }

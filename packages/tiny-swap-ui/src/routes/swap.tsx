@@ -7,7 +7,7 @@ import {
   getPairAddress,
   getProvider,
   getSigner,
-  getTokenAmount,
+  calculateTokenOutAmount,
   isNotSufficient,
   swap,
   tokenTransfer,
@@ -37,7 +37,11 @@ function Swap() {
 
       if (currentField === TokenField.Token0) {
         setToken1ValueLoading(true);
-        const otherValue = await getTokenAmount(token0, token1, token0Value);
+        const otherValue = await calculateTokenOutAmount(
+          token0,
+          token1,
+          token0Value
+        );
         if (otherValue) {
           setToken1Value(otherValue);
         }
@@ -47,7 +51,11 @@ function Swap() {
 
       if (currentField === TokenField.Token1) {
         setToken0ValueLoading(true);
-        const otherValue = await getTokenAmount(token1, token0, token1Value);
+        const otherValue = await calculateTokenOutAmount(
+          token1,
+          token0,
+          token1Value
+        );
         if (otherValue) {
           setToken0Value(otherValue);
         }
