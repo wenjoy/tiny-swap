@@ -10,22 +10,23 @@ function uintTransform(value: number) {
 }
 
 let count = 0;
-async function getContract<T>(name: string, args: any[], address?: string): Promise<[T, string]> {
-  const [deployer] = await ethers.getSigners();
-
+async function createContractIfNotExist<T>(name: string, args: any[], address?: string): Promise<[T, string]> {
   if (address) {
     return [(await ethers.getContractAt(name, address)) as T, address]
   }
 
+  const [deployer] = await ethers.getSigners();
   const contract = await ethers.deployContract(name, args, deployer);
   const contractAddress = await contract.getAddress()
   console.log("contract %s deployed at: %s, by %s", name, contractAddress, deployer);
+
   const path = resolve(__dirname, '../../tiny-swap-ui/.env')
   console.log('deploy-23-path', path)
 
   if (name === "UniswapV2Factory") {
     writeFileSync(path, `REACT_APP_FACTORY_ADDRESS=${contractAddress}\n`)
   }
+
   if (name === "ERC20") {
     if (count > 0) {
       appendFileSync(path, `REACT_APP_TOKEN_B_ADDRESS=${contractAddress}\n`)
@@ -40,9 +41,9 @@ async function getContract<T>(name: string, args: any[], address?: string): Prom
 async function main() {
   const [deployer] = await ethers.getSigners();
 
-  const [factory] = await getContract<UniswapV2Factory>("UniswapV2Factory", [deployer], FACTORY_ADDRESS)
-  const [token0, token0Address] = await getContract<ERC20>('ERC20', [], TOKEN0_ADDRESS)
-  const [token1, token1Address] = await getContract<ERC20>('ERC20', [], TOKEN1_ADDRESS)
+  const [factory] = await createContractIfNotExist<UniswapV2Factory>("UniswapV2Factory", [deployer], FACTORY_ADDRESS)
+  const [token0, token0Address] = await createContractIfNotExist<ERC20>('ERC20', [], TOKEN0_ADDRESS)
+  const [token1, token1Address] = await createContractIfNotExist<ERC20>('ERC20', [], TOKEN1_ADDRESS)
 
   let pairAddress = await factory.getPair(token0Address, token1Address);
 

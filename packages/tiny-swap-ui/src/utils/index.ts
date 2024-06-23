@@ -50,7 +50,6 @@ async function getContractWithSigner(
 }
 
 export async function getSigner() {
-  console.log('index-42', 'im called');
   const provider = getProvider();
   const signer = await provider.getSigner();
   return signer;
